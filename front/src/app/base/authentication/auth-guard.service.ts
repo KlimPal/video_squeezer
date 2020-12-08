@@ -71,9 +71,9 @@ export class AuthGuard implements CanActivate {
                     }
                 })
             }
-             sendWsMsg('getApiRules').then((data) => {
-                 console.log(data);
-             })
+             // sendWsMsg('getApiRules').then((data) => {
+             //     console.log(data);
+             // })
             sendWsMsg('user.getClientConfig').then((data) => {
                 if (!data.result) {
                     return
