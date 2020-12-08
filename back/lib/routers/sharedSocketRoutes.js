@@ -2,11 +2,6 @@ import * as modules from '../use_cases/_index.js'
 
 const methods = {
     ping: async () => 'pong',
-    'incident.create': modules.incident.createIncident,
-    'incident.get': modules.incident.getIncidents,
-    'incident.increaseViews': modules.incident.increaseViews,
-    'incident.remove': modules.incident.removeIncident,
-
     'user.get': modules.user.getUser,
     'user.updateSelfLocation': modules.user.updateSelfLocation,
     'user.updateProfilePhoto': modules.user.updateProfilePhoto,
