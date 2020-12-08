@@ -3,8 +3,6 @@ import * as modules from '../use_cases/_index.js'
 const methods = {
     ping: async () => 'pong',
     'user.get': modules.user.getUser,
-    'user.updateSelfLocation': modules.user.updateSelfLocation,
-    'user.updateProfilePhoto': modules.user.updateProfilePhoto,
     'user.updateProfileInfo': modules.user.updateProfileInfo,
     'user.getClientConfig': modules.user.getClientConfig,
 
@@ -19,6 +17,7 @@ const methods = {
 }
 
 
+getApiRules.public = true;
 function getApiRules() {
     let doc = {
         ...methods,

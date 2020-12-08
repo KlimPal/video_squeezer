@@ -11,7 +11,7 @@ let responseEmitters = {}
 let eventsFromBackend = new EventEmitter()
 
 function initConection() {
-    socket = new WebSocket(nodeWsRootAddress + '/sharedSocket');
+    socket = new WebSocket(nodeWsRootAddress + '/api/sharedSocket');
     socket.onopen = function() {
         appState.connectionWithBackendStatus = 'ok';
         socketOnOpen.emit()
