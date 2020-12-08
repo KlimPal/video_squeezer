@@ -17,3 +17,6 @@
     margin-top: 40vh;
     padding-bottom:
 }
+.uploadStatus{
+    color: var(--gray400);
+}

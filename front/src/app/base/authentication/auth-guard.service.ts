@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
                     localStorage.setItem('userId', data.result.userId)
                     appState.user.token = token
                     appState.user.userId = data.result.userId
-                    this.router.navigateByUrl('/map')
+                    this.router.navigateByUrl('/upload')
                     return false
                 } else {
                     msgUtils.alert(data.error || 'error')
