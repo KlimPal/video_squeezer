@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# sudo myIp=`sh ../local_ip.sh` NGINX_HTTP_PORT=80 NGINX_HTTPS_PORT=443 domains="incidents.klimpal.com monitoring.incidents.klimpal.com minio.incidents.klimpal.com" email=mail@mail.com ./init_letsencrypt.sh
-
 # This is a modified script from https://github.com/wmnnd/nginx-certbot
 
 if ! [ -x "$(command -v docker-compose)" ]; then
@@ -47,7 +45,7 @@ echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/domain"
 mkdir -p "$data_path/conf/live/domain"
 docker-compose run --rm --entrypoint "\
-  openssl req -x509 -nodes -newkey rsa:1024 -days 1\
+  openssl req -x509 -nodes -newkey rsa:2048 -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
     -subj '/CN=localhost'" certbot
@@ -93,6 +91,6 @@ docker-compose run --rm --entrypoint "\
     --force-renewal" certbot
 echo
 
-echo "### Reloading nginx ..."
+echo "### Stop nginx ..."
 
-docker-compose exec nginx nginx -s reload
+docker-compose stop

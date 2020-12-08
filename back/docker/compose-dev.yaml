@@ -10,25 +10,17 @@ services:
     command: server /data
     volumes:
       - minio_data:/data
-    env_file:
-      - .env_minio
+    environment:
+      MINIO_ACCESS_KEY: someaccesskey
+      MINIO_SECRET_KEY: somesecretkey
     ports:
       - 9000:9000
     restart: unless-stopped
-
-  imgproxy:
-    image: darthsim/imgproxy
-    ports:
-      - 8081:8080
-    extra_hosts:
-      - "localhost:${myIp}"
-    restart: unless-stopped
-
   postgres:
     image: postgis/postgis:13-master
     environment:
       POSTGRES_PASSWORD: devpgpass888
-      POSTGRES_DB: local_incidents
+      POSTGRES_DB: video_squeezer
     ports:
       - 5432:5432
     restart: unless-stopped
