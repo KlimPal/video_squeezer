@@ -6,9 +6,9 @@ import { AuthenticationComponent } from './base/authentication/authentication.co
 import { AuthGuard } from './base/authentication/auth-guard.service';
 
 const routes: Routes = [
-    { path: 'myIncidents', canActivate: [AuthGuard], loadChildren: () => import('./modules/incident-list/incident-list.module').then(m => m.IncidentListModule) },
+
     { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-    { path: 'map', canActivate: [AuthGuard], loadChildren: () => import('./modules/map/map.module').then(m => m.MapModule) },
+    //{ path: 'map', canActivate: [AuthGuard], loadChildren: () => import('./modules/map/map.module').then(m => m.MapModule) },
     { path: 'login', component: AuthenticationComponent, canActivate: [AuthGuard] },
     { path: '', component: AuthenticationComponent, canActivate: [AuthGuard] },
     { path: 'authentication/google/callback', component: AuthenticationComponent, canActivate: [AuthGuard], },

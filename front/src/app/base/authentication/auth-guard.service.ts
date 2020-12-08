@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 import { appState } from '../../globalConfig'
 import { msgUtils } from '../../utils/cf'
 import { sendWsMsg, socketOnOpen } from '../../utils/sharedSocket'
-import { PushNotificationService } from '../../services/push-notification.service'
-import { sendSelfLocationToBackend } from '../../modules/map/location'
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
@@ -25,8 +24,6 @@ export class AuthGuard implements CanActivate {
                     localStorage.setItem('userId', data.result.userId)
                     appState.user.token = token
                     appState.user.userId = data.result.userId
-                    sendSelfLocationToBackend()
-                    this.pushService.subscribeToNotifications()
                     this.router.navigateByUrl('/map')
                     return false
                 } else {
@@ -60,7 +57,7 @@ export class AuthGuard implements CanActivate {
         return true;
 
     }
-    constructor(private router: Router, private pushService: PushNotificationService) {
+    constructor(private router: Router) {
         let func = () => {
             appState.user.token = localStorage.getItem('token')
             appState.user.userId = localStorage.getItem('userId')

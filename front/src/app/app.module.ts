@@ -8,12 +8,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { UiModule } from './clear_modules/ui.module'
 import { BaseModule } from './base/base.module';
-import { IncidentListComponent } from './modules/incident-list/incident-list.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        IncidentListComponent,
     ],
     imports: [
         FormsModule,

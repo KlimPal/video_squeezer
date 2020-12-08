@@ -29,8 +29,6 @@
         </mat-form-field>
     </div>
     <br>
-    <mat-slide-toggle class="marginTop20" [(ngModel)]="profile.settings.enablePushNotification" (ngModelChange)="showSaveButton()">Notifications</mat-slide-toggle>
-    <br>
     <div class="saveButtonWrapper">
         <button class="qqq t4 gray" *ngIf="isSaveButtonShow" (click)="undo()">
             <mat-icon>undo</mat-icon>
