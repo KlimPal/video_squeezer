@@ -7,9 +7,10 @@ import { RouterModule } from '@angular/router';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { ProfileComponent } from './profile/profile.component';
 import { TelegramComponent } from './authentication/telegram/telegram.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 @NgModule({
-    declarations: [FooterMenuComponent, AuthenticationComponent, ProfileComponent, TelegramComponent],
+    declarations: [FooterMenuComponent, AuthenticationComponent, ProfileComponent, TelegramComponent, FileUploadComponent],
     imports: [
         CommonModule,
         UiModule,

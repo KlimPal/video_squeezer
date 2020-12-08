@@ -1,0 +1,19 @@
+:host {
+    display: flex;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    background: var(--gray750);
+    justify-content: center;
+    color: var(--gray100);
+    overflow: auto;
+}
+
+
+
+.wrapper {
+    background: rgba(255, 255, 255, 0);
+    padding: 10px;
+    margin-top: 40vh;
+    padding-bottom:
+}

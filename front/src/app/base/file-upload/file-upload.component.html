@@ -1,0 +1,15 @@
+<div class="wrapper">
+    <button class="qqq green t2 padding10_20" [disabled]="fileUploadingNow">
+        <label for="fileUploadInput" class="fileInputLabel" *ngIf="!fileUploadingNow">
+        </label>
+        <mat-icon *ngIf="!fileUploadingNow">cloud_upload </mat-icon>
+        <mat-icon *ngIf="fileUploadingNow" class="infiniteRotate">
+            loop
+        </mat-icon>
+        <span>
+            Upload file
+        </span>
+        <input type="file" class="qqq" id="fileUploadInput"
+               (change)="handleFileSelect($event)" name="files">
+    </button>
+</div>
