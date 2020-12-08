@@ -15,7 +15,6 @@ const methods = {
 
     'files.getPresignedPutObjectUrl': modules.files.getPresignedPutObjectUrl,
 
-    'notification.addPushSubscription': modules.notification.addPushSubscription,
     getApiRules,
 }
 
