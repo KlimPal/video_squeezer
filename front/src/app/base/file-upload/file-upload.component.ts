@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { sendWsMsg } from '../../utils/sharedSocket'
-import { msgUtils, http } from '../../utils/cf'
+import { msgUtils, http, cryptoUtils } from '../../utils/cf'
+
 
 @Component({
     selector: 'app-file-upload',
@@ -13,14 +14,20 @@ export class FileUploadComponent implements OnInit {
 
     ngOnInit(): void {}
     fileUploadingNow = false;
+    uploadStatusText = ''
+
+
 
     async handleFileSelect(event) {
         let file = event.target.files[0];
         if (!file) {
             return;
         }
-
         this.fileUploadingNow = true
+        this.uploadStatusText = 'calculating md5...'
+        let hash = await cryptoUtils.mMd5HashOfFile(file)
+        console.log(hash);
+
 
         // let res = await sendWsMsg('files.getPresignedPutObjectUrl')
         // if (!res.result) {
@@ -31,7 +38,7 @@ export class FileUploadComponent implements OnInit {
 
         // await http.putFileUsingPresignedUrl(url, file)
 
-
+        this.uploadStatusText='';
         this.fileUploadingNow = false
     }
 
