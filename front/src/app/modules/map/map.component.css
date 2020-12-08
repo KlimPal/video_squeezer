@@ -1,0 +1,97 @@
+:host {
+    display: block;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    background: var(--gray100);
+}
+
+.map {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+}
+
+.menu {
+    bottom: 40px;
+    right: 10px;
+    position: absolute;
+    height: auto;
+    text-align: center;
+
+}
+
+
+.menu button.currentLocation {
+    border-radius: 50%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    transition: background 0.2s;
+    color: var(--gray700);
+    box-shadow: 0px 0px 2px 1px var(--primary800);
+
+    margin-bottom: 10px;
+}
+
+.menu button.currentLocation.active {
+    color: var(--blue500);
+}
+
+.menu button.currentLocation mat-icon {
+    font-size: 24px;
+
+}
+
+
+.menu button.addIncident {
+    border-radius: 50%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    transition: background 0.2s;
+    color: var(--red500);
+    box-shadow: 0px 0px 2px 1px var(--red600);
+}
+
+
+
+.menu button.addIncident .text {
+    position: absolute;
+    color: var(--gray600);
+    font-size: 11px;
+    font-weight: 600;
+    transform: translate(0px, -8px);
+}
+
+
+
+
+
+.menu button.addIncident mat-icon {
+    font-size: 38px;
+    transform: translateY(-5px);
+}
+
+@media not all and (pointer: coarse) {
+    .menu button.addIncident:hover {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0px 0px 3px 4px var(--red600);
+    }
+}
+
+@media not all and (pointer: coarse) {
+    .menu button.currentLocation:hover {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0px 0px 2px 2px var(--primary800);
+    }
+}
+
+.menu button.currentLocation:active {
+    background: var(--primary400);
+    transition: background 0.2s;
+}
+
+.menu button.addIncident:active {
+    background: var(--red400);
+    transition: background 0.2s;
+}

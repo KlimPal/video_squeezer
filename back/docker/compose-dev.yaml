@@ -1,0 +1,43 @@
+version: '3.7'
+
+volumes:
+    minio_data: {}
+    postgres_data: {}
+
+services:
+  minio:
+    image: minio/minio
+    command: server /data
+    volumes:
+      - minio_data:/data
+    env_file:
+      - .env_minio
+    ports:
+      - 9000:9000
+    restart: unless-stopped
+
+  imgproxy:
+    image: darthsim/imgproxy
+    ports:
+      - 8081:8080
+    extra_hosts:
+      - "localhost:${myIp}"
+    restart: unless-stopped
+
+  postgres:
+    image: postgis/postgis:13-master
+    environment:
+      POSTGRES_PASSWORD: devpgpass888
+      POSTGRES_DB: local_incidents
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8083:8080
+

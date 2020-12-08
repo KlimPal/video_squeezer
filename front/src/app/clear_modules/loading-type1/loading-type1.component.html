@@ -1,0 +1,6 @@
+<div class="qqq_theme">
+    <div class="spinnerWrapper" [class.loading]="isLoading">
+        <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="50"></mat-progress-spinner>
+    </div>
+    <ng-content class="content"></ng-content>
+</div>

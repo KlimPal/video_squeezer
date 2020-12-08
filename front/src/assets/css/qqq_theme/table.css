@@ -1,0 +1,30 @@
+.qqq_theme table.qqq {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.qqq_theme table.qqq td {
+    padding: 0 10px 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    border-right: dashed 1px rgba(0, 0, 0, 0.2);
+    min-width: 38px;
+    text-align: left;
+}
+
+.qqq_theme table.qqq td:nth-last-child(1) {
+    border-right: none;
+}
+
+.qqq_theme table.qqq tr {
+    white-space: nowrap;
+    border-bottom: dashed 1px rgba(0, 0, 0, 0.2);
+
+    height: 30px;
+    width: 100%;
+}
+
+.qqq_theme table.qqq tr:nth-last-child(1) {
+    border-bottom: none
+}

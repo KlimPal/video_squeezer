@@ -1,0 +1,13 @@
+<div class="beforeMap"></div>
+<!-- <div id="mapbox_id" class="map"></div> -->
+<div class="menu">
+    <button class="qqq t4 currentLocation" (click)="jumpToCurrentLocation()"
+            [class.active]="isCenterIsCurrentLocation">
+        <mat-icon>gps_fixed</mat-icon>
+    </button>
+    <br>
+    <button class="qqq t4 addIncident" (click)="addIncident()">
+        <mat-icon>add_location</mat-icon>
+        <div class="text">Incident</div>
+    </button>
+</div>

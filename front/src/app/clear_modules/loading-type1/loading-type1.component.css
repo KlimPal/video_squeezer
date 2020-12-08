@@ -1,0 +1,33 @@
+:host {
+    display: inline-block;
+    position: relative;
+}
+
+.spinnerWrapper {
+    display: flex;
+    justify-content: center;
+    justify-content: center;
+    align-items: center;
+    height: calc(100%);
+    position: absolute;
+    width: 100%;
+    background: rgba(255, 255, 255, 0);
+    transition: 0.5s;
+    z-index: 100;
+    pointer-events: none;
+}
+
+:host>>>mat-progress-spinner {
+    z-index: 100;
+}
+
+:host>>>.mat-progress-spinner circle,
+.mat-spinner circle {
+    stroke: var(--primary600);
+}
+
+
+.spinnerWrapper.loading {
+    background: rgba(255, 255, 255, 0.5);
+    transition: 0.5s;
+}

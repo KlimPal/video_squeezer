@@ -1,0 +1,16 @@
+{
+    "editor.formatOnSave": true,
+    "eslint.format.enable": true,
+    "cSpell.ignoreWords": [
+        "adminer",
+        "copyhistory",
+        "knexfile",
+        "postgresql"
+    ],
+    "cSpell.words": [
+        "Postgis",
+        "SRID",
+        "dwithin",
+        "jsonb"
+    ]
+}

@@ -1,0 +1,60 @@
+{
+    "name": "back",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "lint": "eslint lib/ index.js config.js",
+        "lint-fix": "eslint lib/ index.js config.js --fix",
+        "start": "npx nodemon --delay 1000ms --watch lib index.js",
+        "test": "$(npm bin)/jest --verbose --forceExit",
+        "prod": "googleCallbackAddress=https://incidents.klimpal.com/authentication/google/callback webAppBaseUrl=https://incidents.klimpal.com node index.js",
+        "db-remigrate-latest": "npx knex --esm --cwd lib/services/knex/  migrate:down && npx knex --esm --cwd lib/services/knex/  migrate:latest"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "apidoc": "^0.20.0",
+        "babel-eslint": "^10.1.0",
+        "body-parser": "^1.19.0",
+        "cookie-parser": "^1.4.5",
+        "cors": "^2.8.5",
+        "deep-object-diff": "^1.1.0",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-basic-auth": "^1.2.0",
+        "flat": "^5.0.0",
+        "fs-extra": "^9.0.1",
+        "googleapis": "^49.0.0",
+        "http": "0.0.1-security",
+        "https": "^1.0.0",
+        "jest": "^25.5.4",
+        "knex": "^0.21.5",
+        "knex-postgis": "^0.12.0",
+        "livr": "^2.3.1",
+        "livr-extra-rules": "^1.2.1",
+        "lodash": "^4.17.19",
+        "minio": "^7.0.16",
+        "node-fetch": "^2.6.1",
+        "nodemon": "^2.0.4",
+        "objection": "^2.2.3",
+        "path-to-regexp": "^6.1.0",
+        "pg": "^8.3.2",
+        "pino": "^6.5.0",
+        "pino-multi-stream": "^5.1.1",
+        "prom-client": "^12.0.0",
+        "sharp": "^0.25.3",
+        "web-push": "^3.4.4",
+        "ws": "^7.3.1"
+    },
+    "apidoc": {
+        "title": "Custom apiDoc browser title",
+        "url": "https://localhost:8443"
+    },
+    "type": "module",
+    "devDependencies": {
+        "eslint": "^7.2.0",
+        "eslint-config-airbnb-base": "^14.2.0",
+        "eslint-plugin-import": "^2.22.0"
+    }
+}

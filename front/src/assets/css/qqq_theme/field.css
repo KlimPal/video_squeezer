@@ -1,0 +1,158 @@
+.qqq_theme .qqq.field .mat-input-element:disabled {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+
+.qqq_theme .qqq.field .mat-form-field-suffix .mat-icon {
+    vertical-align: -30%;
+    cursor: default;
+}
+
+.qqq_theme .qqq.field .mat-form-field-suffix .mat-icon.button {
+    cursor: pointer;
+}
+
+
+.qqq_theme .qqq.field .mat-form-field-flex {
+    box-shadow: inset 0 0 4px 0 rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 1);
+    padding: 1px 5px 1px 5px;
+}
+
+.qqq_theme .qqq.field mat-form-field.mat-focused .mat-form-field-flex {
+    box-shadow: inset 0 0 4px 0 rgba(0, 0, 0, 0.8);
+}
+
+.qqq_theme .qqq.field .mat-form-field-underline {
+    bottom: 0;
+}
+
+.qqq_theme .qqq.field .mat-form-field-infix {
+    border-top: 0px;
+}
+
+.qqq_theme .qqq.field .mat-form-field-wrapper {
+    padding-bottom: 0;
+}
+
+.qqq_theme .qqq.field {
+    margin-top: 0px;
+    padding: 2px;
+    display: inline-block;
+}
+
+.qqq_theme .qqq.field mat-form-field {
+    margin-left: 5px;
+}
+
+.qqq_theme .qqq.field>.name {
+    text-align: left;
+}
+
+.qqq_theme .qqq.field>.hint {
+    font-size: 12px;
+    padding-left: 5px;
+    padding-top: 3px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+
+
+
+.qqq_theme .qqq.field .mat-form-field-suffix {
+    cursor: pointer;
+}
+
+
+
+
+.qqq_theme .qqq.field.width50 mat-form-field {
+    width: 50px;
+}
+
+.qqq_theme .qqq.field.width60 mat-form-field {
+    width: 60px;
+}
+
+.qqq_theme .qqq.field.width80 mat-form-field {
+    width: 80px;
+}
+
+.qqq_theme .qqq.field.width90 mat-form-field {
+    width: 90px;
+}
+
+.qqq_theme .qqq.field.width95 mat-form-field {
+    width: 95px;
+}
+
+.qqq_theme .qqq.field.width100 mat-form-field {
+    width: 100px;
+}
+
+.qqq_theme .qqq.field.width125 mat-form-field {
+    width: 125px;
+}
+
+.qqq_theme .qqq.field.width150 mat-form-field {
+    width: 150px;
+}
+
+.qqq_theme .qqq.field.width200 mat-form-field {
+    width: 200px;
+}
+
+.qqq_theme .qqq.field.width300 mat-form-field {
+    width: 300px;
+}
+
+.qqq_theme .qqq.field.width350 mat-form-field {
+    width: 350px;
+}
+
+.qqq_theme .qqq.field.width400 mat-form-field {
+    width: 400px;
+}
+
+
+
+
+
+
+
+.qqq_theme .qqq.field.t1 .mat-form-field-infix {
+    border-top: 0px;
+}
+
+.qqq_theme .qqq.field.m1>.name {
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+    margin-bottom: 2px;
+    font-size: 0.8em;
+}
+
+.qqq_theme .qqq.field.m2>.name {
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+    margin-bottom: 2px;
+    font-size: 1em;
+}
+
+
+
+
+.qqq_theme .qqq.field.t1 .mat-form-field-wrapper {
+    padding-bottom: 0px;
+}
+
+.qqq_theme .qqq.field.t1 .mat-form-field-subscript-wrapper {
+    display: none !important;
+}
+
+.qqq_theme .qqq.field.t1 .mat-form-field-underline {
+    display: none !important;
+}
+
+.qqq_theme .mat-form-field.mat-focused .mat-form-field-ripple {
+    background: var(--primary600);
+}

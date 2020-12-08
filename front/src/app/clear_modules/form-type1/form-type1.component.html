@@ -1,0 +1,125 @@
+<div class="groupWrapper qqq_theme">
+    <div *ngFor="let groupName of groupNames" class="fieldGroup">
+        <div *ngFor="let field of formConfig.groups[groupName]" [attr.data-pptr]="field.fieldName"
+             [attr.data-type]="field.type">
+            <div *ngIf="!field.hidden" [class.markedGreen]="markedGreenFields[field.fieldName]">
+                <div *ngIf="field.type == 'groupName'" [class]="field.cssClass">
+                    {{field.fieldNameToShow}}
+                    <span class="requireMsg" *ngIf="field.requireMsg">{{field.requireMsg}}</span>
+                </div>
+                <div class="qqq field" *ngIf="field.type == 'text'">
+                    <div class="name">
+                        {{field.fieldNameToShow}}
+                        <span class="requireMsg" *ngIf="field.requireMsg">{{field.requireMsg}}</span>
+                    </div>
+                    <mat-form-field>
+                        <input matInput type="text" [(ngModel)]="data[field.fieldName]"
+                               autocomplete="off"
+                               (ngModelChange)="emitDataChange()"
+                               [disabled]="field.disabled">
+                    </mat-form-field>
+                </div>
+                <ng-container *ngIf="field.type == 'staticText'">
+                    <div class="staticText">
+                        {{field.fieldNameToShow}}
+                        : {{data[field.fieldName]}}
+                    </div>
+                </ng-container>
+                <div class="qqq field" *ngIf="field.type == 'select'">
+                    <div class="name">
+                        {{field.fieldNameToShow}}
+                        <span class="requireMsg" *ngIf="field.requireMsg">{{field.requireMsg}}</span>
+                    </div>
+                    <mat-form-field class="noPlaceholder">
+                        <mat-select [(ngModel)]="data[field.fieldName]" disableRipple
+                                    (ngModelChange)="emitDataChange()">
+                            <mat-option *ngFor="let option of field.options" [value]=" option.value">
+                                {{option.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="qqq field" *ngIf="field.type == 'textArea'">
+                    <mat-form-field>
+                        <textarea matInput [(ngModel)]="data[field.fieldName]"
+                                  (ngModelChange)="emitDataChange()"></textarea>
+                    </mat-form-field>
+                </div>
+                <ng-container *ngIf="field.type == 'bool'">
+                    <mat-checkbox [(ngModel)]="data[field.fieldName]" (ngModelChange)="emitDataChange()"
+                                  [labelPosition]="field.labelPosition || 'after'"
+                                  color="primary">{{field.fieldNameToShow}}</mat-checkbox>
+                </ng-container>
+                <div class="qqq field" *ngIf="field.type == 'multiSelect'">
+                    <div class="name">
+                        {{field.fieldNameToShow}}
+                        <span class="requireMsg" *ngIf="field.requireMsg">{{field.requireMsg}}</span>
+                    </div>
+                    <mat-form-field>
+                        <mat-select multiple disableRipple [(ngModel)]="data[field.fieldName]"
+                                    (ngModelChange)="emitDataChange()">
+                            <mat-option *ngFor="let option of field.options" [value]="option.value">
+                                {{option.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="qqq field datepicker" *ngIf="field.type == 'date'">
+                    <div class="name">
+                        {{field.fieldNameToShow}}
+                        <span class="requireMsg" *ngIf="field.requireMsg">{{field.requireMsg}}</span>
+                    </div>
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" [(ngModel)]="data[field.fieldName]"
+                               (ngModelChange)="emitDataChange()">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="qqq field" *ngIf="field.type == 'phone'">
+                    <div class="name">
+                        {{field.fieldNameToShow}}
+                        <span class="requireMsg" *ngIf="field.requireMsg">{{field.requireMsg}}</span>
+                    </div>
+                    <mat-form-field class="noPlaceholder">
+                        <input matInput type="tel" [(ngModel)]="data[field.fieldName]"
+                               (input)="emitDataChange(); handlePhoneInput($event, data, field.fieldName)">
+                    </mat-form-field>
+                </div>
+                <div class="qqq field" *ngIf="field.type == 'ssn'">
+                    <div class="name">
+                        {{ field.fieldNameToShow }}
+                        <span class="requireMsg" *ngIf="field.requireMsg">{{field.requireMsg}}</span>
+                    </div>
+                    <mat-form-field class="noPlaceholder">
+                        <input matInput [type]="field.inputType || 'text'"
+                               autocomplete="off"
+                               [(ngModel)]="data[field.fieldName]"
+                               (input)="emitDataChange(); handleSsnInput($event, data, field.fieldName)"
+                               (blur)="onBlurSsnFeild(field)" (focus)="onFocusSsnField(field)">
+                    </mat-form-field>
+                </div>
+                <div class=" qqq field" *ngIf="field.type == 'textAutocomplete'">
+                    <div class="name">
+                        {{ field.fieldNameToShow }}
+                        <span class="requireMsg" *ngIf="field.requireMsg">{{field.requireMsg}}</span>
+                    </div>
+                    <mat-form-field>
+                        <input matInput type="text" [formControl]="field.formControl"
+                               ngDefaultControl
+                               [matAutocomplete]="auto"
+                               (blur)="handleBlurOnAutocomplete(field)">
+                        <mat-autocomplete class="qqq_theme" #auto="matAutocomplete" [displayWith]="field.displayFn"
+                                          (optionSelected)="data[field.fieldName] = $event.option.value.value; emitDataChange()">
+                            <mat-option class="qqq overflowAuto" *ngFor="let option of field.filtredOptions | async"
+                                        [value]="option"
+                                        [disabled]="option.disabled">
+                                {{option.name}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

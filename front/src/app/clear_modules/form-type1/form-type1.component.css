@@ -1,0 +1,81 @@
+:host {
+    display: block;
+}
+
+.groupWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    padding-top: 10px;
+}
+
+.groupWrapper .staticText {
+    padding: 5px;
+}
+
+.groupWrapper>>>mat-checkbox {
+    margin-left: 5px;
+}
+
+.fieldGroup {
+
+    border: solid 1px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    padding: 5px 10px 10px 10px;
+    border-radius: 4px;
+}
+
+.fieldGroup .qqq.field {
+    padding: 5px;
+}
+
+table {
+    width: auto;
+}
+
+textarea {
+    height: 150px;
+}
+
+
+.datepicker>>>.mat-form-field-infix {
+    width: 159px;
+}
+
+.fieldGroup>div[data-type=bool]:nth-child(2) {
+    margin-top: 5px;
+}
+
+
+.groupLabel {
+    position: absolute;
+    padding: 0px 5px 0px 5px;
+    height: 1em;
+    line-height: 1em;
+    background: rgba(255, 255, 255, 1);
+    margin-top: -14px;
+    font-weight: 600;
+
+}
+
+.virtualViewportForTextAutocomplete {
+    min-height: 192px;
+    width: 100%;
+}
+
+.markedGreen>>>.qqq.field .mat-form-field-flex {
+    background: var(--green200);
+}
+
+.requireMsg {
+    color: var(--red700);
+    font-size: 12px;
+}
+
+.qqq_theme.groupWrapper .qqq.field>.name {
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,0 +1,44 @@
+<div class="wrapper">
+    <button class="qqq red t2 logout" (click)="logout()">
+        <mat-icon>keyboard_tab</mat-icon>
+        <span>Logout</span>
+    </button>
+    <div class="photoSettings">
+        <div class="imgWrapper">
+            <img *ngIf="profile.photoUrl" [src]="profile.photoUrl" fallbackSrc="/assets/icons/ui/user.svg">
+        </div>
+        <button class="qqq gray t2" [disabled]="photoUrlUploadingNow">
+            <label for="profilePhotoUploadInput" class="fileInputLabel" *ngIf="!photoUrlUploadingNow">
+            </label>
+            <mat-icon *ngIf="!photoUrlUploadingNow">cloud_upload </mat-icon>
+            <mat-icon *ngIf="photoUrlUploadingNow" class="infiniteRotate">
+                loop
+            </mat-icon>
+            <span>
+                Upload new photo
+            </span>
+            <input type="file" class="qqq" id="profilePhotoUploadInput"
+                   (change)="handleFileSelect($event)" name="files" accept="image/jpeg,image/png,image/jpg">
+        </button>
+    </div>
+    <br>
+    Your Name:
+    <div class="qqq field t1 width200">
+        <mat-form-field>
+            <input matInput maxlength="30" [(ngModel)]="profile.userName" autocomplete="off" (ngModelChange)="showSaveButton()">
+        </mat-form-field>
+    </div>
+    <br>
+    <mat-slide-toggle class="marginTop20" [(ngModel)]="profile.settings.enablePushNotification" (ngModelChange)="showSaveButton()">Notifications</mat-slide-toggle>
+    <br>
+    <div class="saveButtonWrapper">
+        <button class="qqq t4 gray" *ngIf="isSaveButtonShow" (click)="undo()">
+            <mat-icon>undo</mat-icon>
+            <span>Undo</span>
+        </button>
+        <button class="qqq green t4 marginLeft10" *ngIf="isSaveButtonShow" (click)="save()">
+            <mat-icon>done</mat-icon>
+            <span>Save</span>
+        </button>
+    </div>
+</div>

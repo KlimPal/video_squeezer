@@ -1,0 +1,64 @@
+@import url(button.css);
+@import url(field.css);
+@import url(table.css);
+@import url(margin.css);
+@import url(color.css);
+
+
+
+.qqq_theme a.qqq {
+    color: rgba(0, 122, 197, 0.9);
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.qqq_theme a.qqq:hover {
+    color: rgba(0, 122, 197, 1);
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 122, 197, 1);
+}
+
+
+.qqq_theme .padding6_6_6_12 {
+    padding: 6px 6px 6px 12px !important;
+}
+
+.qqq_theme .padding5_10_5_10 {
+    padding: 5px 10px 5px 10px !important;
+}
+
+.qqq_theme .padding10_20_10_20 {
+    padding: 10px 20px 10px 20px !important;
+}
+
+.qqq_theme .padding10_20 {
+    padding: 10px 20px !important;
+}
+
+.qqq_theme .padding10_30 {
+    padding: 10px 30px !important;
+}
+
+.qqq_theme.mat-menu-panel {
+    min-height: 0px;
+}
+
+
+.qqq_theme mat-option.qqq.overflowAuto span {
+    overflow: auto;
+    text-overflow: clip;
+}
+
+.qqq_theme mat-option.qqq.overflowAuto span::-webkit-scrollbar {
+    display: none;
+    scrollbar-width: none;
+}
+
+
+.qqq.undoSnackBar{
+    background: var(--gray900);
+    padding: 10px 20px;
+    min-height: 10px;
+    margin-top: 10px;
+}

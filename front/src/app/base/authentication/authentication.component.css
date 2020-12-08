@@ -1,0 +1,41 @@
+:host {
+    display: flex;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    background: var(--gray800);
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+img.logo{
+    width: 150px;
+    height: 100px;
+    display: block;
+    margin-left: 0px;
+    opacity: 1;
+}
+
+.wrapper {
+    background: rgba(255, 255, 255, 0);
+    padding: 10px;
+    margin-top: -75px;
+}
+
+.wrapper button {
+    padding: 10px 30px;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.05);
+    min-width: 250px;
+    text-align: left;
+
+}
+
+.wrapper button:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+.hidden {
+    display: none;
+}

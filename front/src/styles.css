@@ -1,0 +1,66 @@
+@import url(assets/css/fonts.css);
+@import url(assets/css/qqq_theme/main.css);
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import url(assets/alertify/alertify.css);
+@import url(assets/css/mapbox.css);
+
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::-moz-focus-inner {
+    border: 0;
+}
+
+a {
+    cursor: pointer;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(20, 20, 20, 1);
+    margin: 0;
+}
+
+button {
+    font-family: 'Roboto', sans-serif;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+.clearDialog .mat-dialog-container {
+    padding: 0;
+    background: rgba(0, 0, 0, 0);
+    color: rgba(20, 20, 20, 1);
+}
+
+.clearDialog.noShadow .mat-dialog-container{
+    box-shadow: none;
+}
+
+
+.alertify .dialog .msg {
+    white-space: pre-wrap;
+}
+
+.alertify .dialog details {
+    text-align: left;
+    white-space: pre-wrap;
+    margin-left: 15px;
+}
+
+.alertify .dialog details summary:focus {
+    outline: none;
+}
+
+.mapboxgl-marker svg g {
+    fill: #d8256b;
+}

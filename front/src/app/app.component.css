@@ -1,0 +1,16 @@
+:host {
+    display: block;
+
+}
+
+:host>div {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100 * var(--vh, 1vh))
+}
+
+app-loading-type1 {
+    flex-grow: 1;
+    display: block;
+    align-self: stretch;
+}

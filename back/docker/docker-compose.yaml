@@ -1,0 +1,168 @@
+# PG_PASSWORD=somepass772 NGINX_HTTP_PORT=80 NGINX_HTTPS_PORT=443 myIp=`sh local_ip.sh` docker-compose -p local_incidents_prod -f docker-compose.yaml up --build
+
+version: '3.7'
+
+volumes:
+    prometheus_data: {}
+    minio_data: {}
+    postgres_data: {}
+
+
+services:
+  node:
+    build:
+      context: ../
+      dockerfile: ./docker/dockerfile
+    environment:
+      - S3_END_POINT=minio
+      - S3_PORT=9000
+      - PG_HOST=localhost
+      - PG_USER=postgres
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_DATABSE=local_incidents
+      - PG_PORT=5432
+
+    env_file:
+      - .env_node
+    expose:
+      - '8443'
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgis/postgis:13-master
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: local_incidents
+    ports:
+      - 5432:5432
+    expose:
+      - '5432'
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    hostname: minio
+    container_name: minio
+    command: server /data
+    volumes:
+      - minio_data:/data
+    env_file:
+      - .env_minio
+    expose:
+      - '9000'
+
+    restart: unless-stopped
+
+  imgproxy:
+    image: darthsim/imgproxy
+    expose:
+      - '8080'
+    restart: unless-stopped
+
+  nginx:
+    image: ranadeeppolavarapu/nginx-http3:latest
+    ports:
+      - ${NGINX_HTTP_PORT:-8080}:80
+      - ${NGINX_HTTPS_PORT:-8443}:443/tcp
+    depends_on:
+      - node
+      - grafana
+      - minio
+      - imgproxy
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
+      - ./nginx/common:/etc/nginx/conf.d/common:ro
+      - ../cert/full_bundle.crt:/etc/ssl/localhost.pem:ro
+      - ../cert/private.key:/etc/ssl/private/localhost.key:ro
+      - ./nginx_log:/var/log/nginx
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+
+
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 110000
+        hard: 150000
+    restart: unless-stopped
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+
+  prometheus:
+    image: prom/prometheus:v2.16.0
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention=200h'
+      - '--web.enable-lifecycle'
+    expose:
+      - '9090'
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    depends_on:
+      - prometheus
+    user: ${userId}
+    expose:
+      - '3000'
+    volumes:
+      - ./monitoring/grafana:/var/lib/grafana
+      - ./monitoring/grafana_conf:/etc/grafana
+      - ./monitoring/grafana_provisioning/:/etc/grafana/provisioning/
+    command:
+      --config=/etc/grafana/sample.ini
+    restart: unless-stopped
+
+  cadvisor:
+    image: google/cadvisor
+    expose:
+      - '8080'
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+    restart: unless-stopped
+    privileged: true
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter
+    expose:
+      - '9100'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+
+
+
+
+
+
+
+

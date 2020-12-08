@@ -1,0 +1,62 @@
+<div class="qqq_theme">
+    <div class="menu">
+        <button class="qqq" (click)="close()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div class="form">
+        <div class="qqq field width300">
+            <div class="name">Title</div>
+            <mat-form-field>
+                <input matInput maxlength="30" [(ngModel)]="info.title" autocomplete="off">
+            </mat-form-field>
+        </div>
+        <br>
+        <div class="qqq field width300">
+            <div class="name">Description</div>
+            <mat-form-field>
+                <textarea matInput maxlength="1000" [(ngModel)]="info.description" autocomplete="off"></textarea>
+            </mat-form-field>
+        </div>
+        <br>
+        <div class="qqq field width95">
+            <div class="name">Duration</div>
+            <mat-form-field>
+                <select matNativeControl [(ngModel)]="info.duration">
+                    <option *ngFor="let option of durationOptions" [value]="option.value">
+                        {{option.name}}
+                    </option>
+                </select>
+            </mat-form-field>
+        </div>
+        <div class="qqq field width95">
+            <div class="name">Radius</div>
+            <mat-form-field>
+                <select matNativeControl [(ngModel)]="info.radius">
+                    <option *ngFor="let option of radiusOptions" [value]="option.value">
+                        {{option.name}}
+                    </option>
+                </select>
+            </mat-form-field>
+        </div>
+        <button class="qqq t3 marginLeft5">
+            <label for="photoUploadInput" class="fileInputLabel">
+            </label>
+            <mat-icon>cloud_upload </mat-icon>
+            <span>
+                Photo
+            </span>
+            <input type="file" class="qqq" id="photoUploadInput" (change)="handleFileSelect($event)" name="files"
+                accept="image/jpeg,image/png,image/jpg">
+        </button>
+        <div class="imgWrapper" *ngIf="attachment.photoAsBase64">
+            <img [src]="attachment.photoAsBase64">
+        </div>
+        <div class="createButtonWrapper">
+            <button class="qqq red t4" (click)="createIncident()">
+                <mat-icon>done</mat-icon>
+                <span>Add Incident</span>
+            </button>
+        </div>
+    </div>
+</div>

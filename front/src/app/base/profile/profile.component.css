@@ -1,0 +1,68 @@
+:host {
+    display: flex;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    background: var(--gray750);
+    justify-content: center;
+    color: var(--gray100);
+    overflow: auto;
+}
+
+
+
+.wrapper {
+    background: rgba(255, 255, 255, 0);
+    padding: 10px;
+    margin-top: 10vh;
+    padding-bottom:
+}
+
+
+
+.photoSettings {
+    display: flex;
+    align-items: center;
+}
+
+.photoSettings .imgWrapper {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+}
+
+
+.photoSettings img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: solid 1px var(--cyan500);
+}
+
+
+
+.qqq.field>>>.mat-form-field-flex {
+    background: var(--gray800);
+    border-radius: 4px;
+    border: solid 1px var(--cyan500);
+}
+
+.qqq.field>>>.mat-focused .mat-form-field-flex {
+    background: var(--gray900);
+}
+
+.qqq.field>>>.mat-input-element {
+    caret-color: var(--cyan500);
+}
+
+
+.saveButtonWrapper {
+    height: 36px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+button.logout {
+    margin-bottom: 20px;
+}

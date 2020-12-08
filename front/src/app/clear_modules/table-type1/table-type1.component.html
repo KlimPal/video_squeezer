@@ -1,0 +1,38 @@
+<div class="qqq_theme">
+    <div class="tableWrapper">
+        <div>
+            <div class="headersTableWrapper">
+                <table class="headers">
+                    <tr>
+                        <td *ngFor="let column of columns">
+                            {{column.header}}
+                            <div *ngIf="column.sortable" class="sortMenu">
+                                <button class="qqq up" [class.active]="column.sortState ==1"
+                                        *ngIf="!column.sortState || column.sortState ==1"
+                                        (click)="toggleSorting(column)">
+                                    <mat-icon>arrow_upward</mat-icon>
+                                </button>
+                                <button class="qqq down" [class.active]="column.sortState ==-1"
+                                        *ngIf=" column.sortState ==-1"
+                                        (click)="toggleSorting(column)">
+                                    <mat-icon>arrow_downward</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <cdk-virtual-scroll-viewport itemSize="30" class="tableVirtualViewport" minBufferPx="1100"
+                                         maxBufferPx="2000" (scroll)="fitHeaders($event)">
+                <table class="qqq mainTable">
+                    <tr *cdkVirtualFor="let row of data; let i = index">
+                        <td *ngFor="let column of columns">
+                            <ng-container *ngTemplateOutlet="cellTemplate, context: { $implicit: createCtx(row, column, i) }">
+                            </ng-container>
+                        </td>
+                    </tr>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

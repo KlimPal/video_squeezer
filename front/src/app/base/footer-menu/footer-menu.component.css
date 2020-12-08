@@ -1,0 +1,54 @@
+:host {
+    display: block;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.buttonWrapper {
+    display: flex;
+    justify-content: center;
+    height: 50px;
+}
+
+.buttonWrapper button {
+    flex: auto;
+    transition: background 0.1s;
+    color: var(--gray200);
+    background: var(--gray700);
+}
+
+.buttonWrapper button span {
+    font-variant: all-small-caps;
+    font-size: 18px;
+}
+
+.buttonWrapper button:hover {
+    color: var(--gray200);
+    background: var(--gray800);
+}
+
+button.qqq.active {
+    background: var(--gray800);
+    transition: background 0.2s;
+    text-shadow: 0 0 5px var(--cyan500);
+}
+
+button.qqq.active::before {
+    height: 4px;
+    width: 50%;
+    background: var(--cyan500);
+    border-radius: 4px;
+    position: absolute;
+    display: block;
+    bottom: 0;
+    content: ' ';
+    margin-left: calc(50% - 6px - 25%);
+}
+
+button.qqq.active:hover {
+    background: var(--gray800);
+}
+
+.buttonWrapper button:not(:last-child) {
+    border-right: 1px solid var(--primary500);
+}
