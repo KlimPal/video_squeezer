@@ -3,6 +3,8 @@ export function up(knex, Promise) {
         table.string('id', 16).primary()
         table.string('bucket')
         table.string('object_name', 1024)
+        table.string('status')
+        table.string('hash')
         table.jsonb('meta_data')
         table.integer('size')
         table.string('author_id', 16).references('id').inTable('users').onDelete('SET NULL')

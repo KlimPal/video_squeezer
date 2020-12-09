@@ -1,10 +1,9 @@
 import objection from 'objection'
-import { User } from './_index.js'
+import { User, FilePart } from './_index.js'
 import { minioClient, defaultBucket } from '../services/fileApi.js'
 import { BaseModel } from './base.js'
 import cf from '../utils/cf.js'
 import config from '../../config.js'
-
 
 class File extends BaseModel {
     id
@@ -14,6 +13,12 @@ class File extends BaseModel {
     authorId
     createdAt
     updatedAt
+    status
+
+    static STATUSES = {
+        PARTIAL_UPLOAD_STARTED: 'PARTIAL_UPLOAD_STARTED',
+        UPLOAD_COMPLETED: 'UPLOAD_COMPLETED'
+    }
 
     async $afterDelete(queryContext) {
         await super.$afterDelete(queryContext)
@@ -24,7 +29,6 @@ class File extends BaseModel {
         return 'files'
     }
 
-
     static get relationMappings() {
         return {
             author: {
@@ -33,6 +37,14 @@ class File extends BaseModel {
                 join: {
                     from: 'files.authorId',
                     to: 'users.id',
+                },
+            },
+            fileParts: {
+                relation: objection.Model.HasManyRelation,
+                modelClass: FilePart,
+                join: {
+                    from: 'files.id',
+                    to: 'fileParts.fileId',
                 },
             },
         }
@@ -65,7 +77,7 @@ class File extends BaseModel {
         url = url.replace(/[^/]*\/\/[^/]*\//, `${config.s3.publicBaseUrl}/`)
         return url
     }
-}
 
+}
 
 export default File

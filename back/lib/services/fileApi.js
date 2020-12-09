@@ -5,7 +5,7 @@ import cf from '../utils/cf.js'
 const minioClient = new minio.Client({
     endPoint: config.s3.endPoint,
     port: config.s3.port,
-    useSSL: true,
+    useSSL: config.s3.useSSL,
     accessKey: config.s3.accessKey,
     secretKey: config.s3.secretKey,
 })

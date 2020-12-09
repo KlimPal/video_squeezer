@@ -26,15 +26,17 @@ export class FileUploadComponent implements OnInit {
         this.fileUploadingNow = true
         this.uploadStatusText = 'calculating md5...'
         let hash = await cryptoUtils.mMd5HashOfFile(file)
-        console.log(hash);
+        let res = await sendWsMsg('files.getPartialUpload', {
+            fileHash: hash,
+            fileSize: file.size,
+        })
+        if (!res.result) {
+            msgUtils.alert(res.error || 'error', { details: res.details })
+            return
+        }
 
-
-        // let res = await sendWsMsg('files.getPresignedPutObjectUrl')
-        // if (!res.result) {
-        //     msgUtils.alert(res.error || 'error', { details: res.details })
-        //     return
-        // }
-        // let { url, fileId } = res.result
+         let { uploadParts, fileId } = res.result
+         console.log(uploadParts);
 
         // await http.putFileUsingPresignedUrl(url, file)
 

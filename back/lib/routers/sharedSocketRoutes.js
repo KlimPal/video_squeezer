@@ -12,6 +12,7 @@ const methods = {
     'authentication.logout': modules.authentication.logout,
 
     'files.getPresignedPutObjectUrl': modules.files.getPresignedPutObjectUrl,
+    'files.getPartialUpload': modules.files.getPartialUpload,
 
     getApiRules,
 }
