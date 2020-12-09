@@ -8,8 +8,8 @@ back/utils/.DS_Store
 back/.DS_Store
 
 .DS_Store
-back/docker/nginx_light/nginx_log
-back/docker/nginx_light/certbot
+back/docker/nginx/nginx_log
+back/docker/nginx/certbot
 back/docker/monitoring/grafana/grafana.db
 
 .env
