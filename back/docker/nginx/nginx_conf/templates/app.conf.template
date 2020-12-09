@@ -59,5 +59,12 @@ server {
         proxy_pass http://backend;
     }
 
+    location / {
+        alias /var/www/video-squeezer-web-app/;
+        try_files $uri /index.html index.html;
+    }
+
+
+
 }
 
