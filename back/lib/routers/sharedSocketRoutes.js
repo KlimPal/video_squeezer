@@ -13,6 +13,7 @@ const methods = {
 
     'files.getPresignedPutObjectUrl': modules.files.getPresignedPutObjectUrl,
     'files.getPartialUpload': modules.files.getPartialUpload,
+    'files.completeFilePart': modules.files.completeFilePart,
 
     getApiRules,
 }

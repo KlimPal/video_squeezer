@@ -38,7 +38,7 @@ class FilePart extends BaseModel {
                 modelClass: File,
                 join: {
                     from: 'fileParts.fileId',
-                    to: 'file.id',
+                    to: 'files.id',
                 },
             },
 

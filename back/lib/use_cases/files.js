@@ -2,6 +2,9 @@ import cf from '../utils/cf.js'
 import config from '../../config.js'
 import fileApi from '../services/fileApi.js'
 import { File, FilePart } from '../models/_index.js'
+import {
+    emitError, errorCodes,
+} from '../utils/error_utils.js'
 
 async function getPresignedPutObjectUrl(data, { context }) {
     const expiryInMs = 1000 * 60 * 10
@@ -23,10 +26,30 @@ async function getPresignedPutObjectUrl(data, { context }) {
     }
 }
 
+
+completeFilePart.rules = {
+    filePartId: ['required', 'string'],
+}
+
+async function completeFilePart(data, { context }){
+    let filePart = await FilePart.query().findById(data.filePartId).withGraphFetched('file')
+    if(!filePart){
+        emitError(errorCodes.notFound)
+    }
+    if(filePart.file.authorId !== context.userId){
+        emitError(errorCodes.notPermitted)
+    }
+    await filePart.$query().patch({
+        status: FilePart.STATUSES.UPLOADED
+    })
+    return 'ok'
+}
+
 getPartialUpload.rules = {
     fileSize: ['required', 'positive_integer'],
     fileHash: ['required', 'string'],
 }
+
 
 async function getPartialUpload(data, { context }) {
     const partSize = 50 * 1024 * 1024
@@ -42,6 +65,7 @@ async function getPartialUpload(data, { context }) {
             rangeStart: filePart.rangeStart,
             rangeEnd: filePart.rangeEnd,
             status: filePart.status,
+            filePartId: filePart.id,
             presignedPutUrl: await filePart.getPresignedPutUrl(presignedLinkExpiryInMs),
         })))
 
@@ -60,8 +84,6 @@ async function getPartialUpload(data, { context }) {
         status: File.STATUSES.PARTIAL_UPLOAD_STARTED,
     })
 
-
-
     let partsNumber = Math.ceil(data.fileSize / partSize)
     let filePartsData = Array(partsNumber).fill().map((_, partIndex) => ({
         id: cf.generateUniqueCode(),
@@ -69,7 +91,7 @@ async function getPartialUpload(data, { context }) {
         fileId: file.id,
         rangeStart: partIndex * partSize,
         rangeEnd: (partIndex + 1) * partSize,
-        objectName: cf.generateUniqueCode(24),
+        objectName: file.objectName + '_parts/' + cf.generateUniqueCode(24),
         status: FilePart.STATUSES.CREATED,
     }))
     let lastPart = filePartsData.slice(-1)[0]
@@ -80,6 +102,7 @@ async function getPartialUpload(data, { context }) {
     let uploadParts = await Promise.all(fileParts.map(async (filePart) => ({
         rangeStart: filePart.rangeStart,
         rangeEnd: filePart.rangeEnd,
+        filePartId: filePart.id,
         status: filePart.status,
         presignedPutUrl: await filePart.getPresignedPutUrl(presignedLinkExpiryInMs),
     })))
@@ -90,4 +113,4 @@ async function getPartialUpload(data, { context }) {
     }
 }
 
-export { getPresignedPutObjectUrl, getPartialUpload }
+export { getPresignedPutObjectUrl, getPartialUpload, completeFilePart }

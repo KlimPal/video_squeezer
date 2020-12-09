@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { sendWsMsg } from '../../utils/sharedSocket'
 import { msgUtils, http, cryptoUtils } from '../../utils/cf'
 
-
 @Component({
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
@@ -15,8 +14,6 @@ export class FileUploadComponent implements OnInit {
     ngOnInit(): void {}
     fileUploadingNow = false;
     uploadStatusText = ''
-
-
 
     async handleFileSelect(event) {
         let file = event.target.files[0];
@@ -35,12 +32,19 @@ export class FileUploadComponent implements OnInit {
             return
         }
 
-         let { uploadParts, fileId } = res.result
-         console.log(uploadParts);
+        let { uploadParts, fileId } = res.result
+        console.log(uploadParts);
+        for (let part of uploadParts) {
+            let blobPart =  file.slice(part.rangeStart, part.rangeEnd)
+            await http.putFileUsingPresignedUrl(part.presignedPutUrl, blobPart)
+            await sendWsMsg('files.completeFilePart', {
+                filePartId: part.filePartId,
+            })
+        }
 
         // await http.putFileUsingPresignedUrl(url, file)
 
-        this.uploadStatusText='';
+        this.uploadStatusText = '';
         this.fileUploadingNow = false
     }
 
