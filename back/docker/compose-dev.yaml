@@ -10,9 +10,8 @@ services:
     command: server /data
     volumes:
       - minio_data:/data
-    environment:
-      MINIO_ACCESS_KEY: someaccesskey
-      MINIO_SECRET_KEY: somesecretkey
+    env_file:
+      - .env_minio
     ports:
       - 9000:9000
     restart: unless-stopped
