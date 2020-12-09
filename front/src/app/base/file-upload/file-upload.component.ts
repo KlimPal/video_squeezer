@@ -38,10 +38,15 @@ export class FileUploadComponent implements OnInit {
             hash = filesWithSameLength[0].hash
         } else {
             this.uploadStatusText = 'calculating md5...'
-            hash = await cryptoUtils.mMd5HashOfFile(file, 1024 * 1024 * 5, (progress) => {
-                let percents = Math.round(progress * 100);
-                this.uploadStatusText = `calculating md5: ${percents}%`
+            hash = await cryptoUtils.mMd5HashOfFile(file, {
+                chunkSize: 1024 * 1024 * 5,
+                progressCallback: (progress) => {
+                    let percents = Math.round(progress * 100);
+                    this.uploadStatusText = `calculating md5: ${percents}%`
+                },
+                chunkNumberIncrement: 20
             })
+
         }
 
         res = await sendWsMsg('files.getPartialUpload', {
@@ -58,7 +63,7 @@ export class FileUploadComponent implements OnInit {
 
         let { uploadParts, fileId } = res.result
 
-        uploadParts = uploadParts.sort((a,b)=>a.rangeStart - b.rangeStart)
+        uploadParts = uploadParts.sort((a, b) => a.rangeStart - b.rangeStart)
 
         for (let i = 0; i < uploadParts.length; i++) {
             let part = uploadParts[i]
