@@ -204,7 +204,7 @@ export let cryptoUtils = {
         }
         return bufferToHex(window.crypto.getRandomValues(new Uint8Array(byteLength)))
     },
-    mMd5HashOfFile(file, chunkSize = 1024 * 1024 * 5) {
+    mMd5HashOfFile(file, chunkSize = 1024 * 1024 * 5, progressCallback=(progress)=>{}) {
 
         let chunks = Math.ceil(file.size / chunkSize)
         let currentChunk = 0
@@ -213,7 +213,7 @@ export let cryptoUtils = {
 
         return new Promise((resolve, reject) => {
             fileReader.onload = function(e) {
-                console.log('read chunk #', currentChunk + 1, 'of', chunks);
+                progressCallback((currentChunk + 1)/chunks)
                 spark.append(e.target.result);
                 currentChunk++;
                 if (currentChunk < chunks) {

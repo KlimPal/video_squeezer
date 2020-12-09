@@ -14,6 +14,9 @@ const methods = {
     'files.getPresignedPutObjectUrl': modules.files.getPresignedPutObjectUrl,
     'files.getPartialUpload': modules.files.getPartialUpload,
     'files.completeFilePart': modules.files.completeFilePart,
+    'files.completePartialUpload': modules.files.completePartialUpload,
+    'files.getOwnFiles': modules.files.getOwnFiles,
+
 
     getApiRules,
 }

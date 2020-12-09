@@ -27,21 +27,53 @@ async function getPresignedPutObjectUrl(data, { context }) {
 }
 
 
+getOwnFiles.rules = {
+}
+
+async function getOwnFiles(data, { context }) {
+    let files = await File.query().where({
+        authorId: context.userId,
+    })
+    return files
+}
+
+
+completePartialUpload.rules = {
+    fileId: ['required', 'string'],
+}
+
+async function completePartialUpload(data, { context }) {
+    let file = await File.query().findById(data.fileId)
+    if (file.authorId !== context.userId) {
+        emitError(errorCodes.notPermitted)
+    }
+    if (await file.isAllPartsUploaded()) {
+        return await file.completePartialUpload()
+    }
+    return this
+}
+
 completeFilePart.rules = {
     filePartId: ['required', 'string'],
 }
 
-async function completeFilePart(data, { context }){
-    let filePart = await FilePart.query().findById(data.filePartId).withGraphFetched('file')
-    if(!filePart){
+
+async function completeFilePart(data, { context }) {
+    let filePart = await FilePart.query().findById(data.filePartId)
+    if (!filePart) {
         emitError(errorCodes.notFound)
     }
-    if(filePart.file.authorId !== context.userId){
+
+    let file = await File.query().findById(filePart.fileId)
+
+    if (file.authorId !== context.userId) {
         emitError(errorCodes.notPermitted)
     }
+
     await filePart.$query().patch({
-        status: FilePart.STATUSES.UPLOADED
+        status: FilePart.STATUSES.UPLOADED,
     })
+
     return 'ok'
 }
 
@@ -52,7 +84,12 @@ getPartialUpload.rules = {
 
 
 async function getPartialUpload(data, { context }) {
-    const partSize = 50 * 1024 * 1024
+    let partSize = 50 * 1024 * 1024
+
+    if (data.fileSize / partSize > 100) {
+        partSize = Math.round(data.fileSize / 100)
+    }
+
     const presignedLinkExpiryInMs = 1000 * 60 * 60 * 24 // 1 day
 
     let existingFile = await File.query().findOne({
@@ -61,6 +98,9 @@ async function getPartialUpload(data, { context }) {
     }).withGraphFetched('fileParts')
 
     if (existingFile) {
+        if (existingFile.status === File.STATUSES.UPLOAD_COMPLETED) {
+            emitError(errorCodes.alreadyExists, existingFile)
+        }
         let uploadParts = await Promise.all(existingFile.fileParts.map(async (filePart) => ({
             rangeStart: filePart.rangeStart,
             rangeEnd: filePart.rangeEnd,
@@ -82,6 +122,7 @@ async function getPartialUpload(data, { context }) {
         authorId: context.userId,
         hash: data.fileHash,
         status: File.STATUSES.PARTIAL_UPLOAD_STARTED,
+        size: data.fileSize
     })
 
     let partsNumber = Math.ceil(data.fileSize / partSize)
@@ -91,7 +132,7 @@ async function getPartialUpload(data, { context }) {
         fileId: file.id,
         rangeStart: partIndex * partSize,
         rangeEnd: (partIndex + 1) * partSize,
-        objectName: file.objectName + '_parts/' + cf.generateUniqueCode(24),
+        objectName: `${file.objectName}_parts/${cf.generateUniqueCode(24)}`,
         status: FilePart.STATUSES.CREATED,
     }))
     let lastPart = filePartsData.slice(-1)[0]
@@ -113,4 +154,6 @@ async function getPartialUpload(data, { context }) {
     }
 }
 
-export { getPresignedPutObjectUrl, getPartialUpload, completeFilePart }
+export {
+    getPresignedPutObjectUrl, getPartialUpload, completeFilePart, completePartialUpload, getOwnFiles
+}

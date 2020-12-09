@@ -6,7 +6,7 @@ export function up(knex, Promise) {
         table.string('status')
         table.string('hash')
         table.jsonb('meta_data')
-        table.integer('size')
+        table.bigInteger('size')
         table.string('author_id', 16).references('id').inTable('users').onDelete('SET NULL')
         table.timestamp('created_at').defaultTo(knex.fn.now())
         table.timestamp('updated_at').defaultTo(knex.fn.now())

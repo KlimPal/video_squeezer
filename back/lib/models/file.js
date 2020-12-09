@@ -1,8 +1,11 @@
 import objection from 'objection'
+import path from 'path'
+import fs from 'fs-extra'
 import { User, FilePart } from './_index.js'
 import { minioClient, defaultBucket } from '../services/fileApi.js'
 import { BaseModel } from './base.js'
 import cf from '../utils/cf.js'
+import { concatFiles } from '../utils/files.js'
 import config from '../../config.js'
 
 class File extends BaseModel {
@@ -17,7 +20,8 @@ class File extends BaseModel {
 
     static STATUSES = {
         PARTIAL_UPLOAD_STARTED: 'PARTIAL_UPLOAD_STARTED',
-        UPLOAD_COMPLETED: 'UPLOAD_COMPLETED'
+        PART_CONCATINATING: 'PART_CONCATINATING',
+        UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
     }
 
     async $afterDelete(queryContext) {
@@ -78,6 +82,46 @@ class File extends BaseModel {
         return url
     }
 
+    async isAllPartsUploaded() {
+        let oneNotUploaded = await FilePart.query().findOne({
+            fileId: this.id,
+            status: FilePart.STATUSES.CREATED,
+        })
+        if (oneNotUploaded) {
+            return false
+        }
+        return true
+    }
+
+    async completePartialUpload() {
+        if (this.status === File.STATUSES.UPLOAD_COMPLETED) {
+            return this
+        }
+
+        let allParts = (await FilePart.query().where({
+            fileId: this.id,
+        })).sort((a, b) => a.rangeStart - b.rangeStart)
+
+        let tmpDir = path.join(config.indexPath, 'tmp')
+        let targetPath = path.join(tmpDir, this.id)
+        let sourceList = []
+        await Promise.all(allParts.map(async (part) => {
+            let partLocalPath = path.join(tmpDir, part.id)
+            sourceList.push(partLocalPath)
+            await cf.pipeToFinish(await part.getStream(), fs.createWriteStream(partLocalPath))
+        }))
+        await concatFiles(sourceList, targetPath)
+        await minioClient.fPutObject(this.bucket, this.objectName, targetPath)
+        let stat = await minioClient.statObject(this.bucket, this.objectName)
+        await Promise.all([...sourceList, targetPath].map((el) => fs.remove(el)))
+        await this.$query().patchAndFetch({
+            status: File.STATUSES.UPLOAD_COMPLETED,
+            size: stat.size
+        })
+        await Promise.all(allParts.map((part) => part.$query().delete()))
+
+        return this
+    }
 }
 
 export default File

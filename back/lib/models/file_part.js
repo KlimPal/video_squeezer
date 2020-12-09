@@ -45,9 +45,9 @@ class FilePart extends BaseModel {
         }
     }
 
-    // getStream() {
-    //     return minioClient.getObject(this.bucket, this.objectName)
-    // }
+    getStream() {
+        return minioClient.getObject(this.bucket, this.objectName)
+    }
     // get publicUrl() {
     //     return `${config.s3.publicBaseUrl}/${this.bucket}/${this.objectName}`
     // }

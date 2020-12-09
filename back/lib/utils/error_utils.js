@@ -8,6 +8,7 @@ const errorCodes = {
     invalidParameters: 'INVALID_PARAMETERS',
     notPermitted: 'NOT_PERMITTED',
     unknownError: 'UNKNOWN_ERROR',
+    alreadyExists: 'ALREADY_EXISTS',
     jsonParseError: 'JSON_PARSE_ERROR',
     invalidMethod: 'INVALID_METHOD',
     userNotFound: 'USER_NOT_FOUND',

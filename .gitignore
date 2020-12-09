@@ -20,3 +20,5 @@ back/docker/monitoring/grafana/grafana.db
 back/logs/*
 !back/logs/.gitkeep
 
+back/tmp/*
+!back/tmp/.gitkeep
