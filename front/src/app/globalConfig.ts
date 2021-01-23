@@ -6,33 +6,11 @@
  *
  */
 
-let baseHref = '';
+const browserWindow = window || {};
+const browserWindowEnv = browserWindow['__env'] || {};
 
-function getBaseHref() {
-    let el = document.querySelector('base');
-    if (!el) {
-        return window.location.origin
-    }
-    let result = el.href.split('').slice(0, -1).join('');
-    return result
-}
-baseHref = getBaseHref();
-
-let nodeRootAddress = baseHref;
-let nodeWsRootAddress = baseHref.replace(/.*\/\//, 'wss://');
-
-if (baseHref.match(/:(42\d\d)|(8080)|(8443)/)) {
-    if (baseHref.match(/localhost:/)) {
-        nodeRootAddress = window.location.origin
-            .replace(/https?(.*):42\d\d/, 'http$1:8080');
-    } else {
-        nodeRootAddress = window.location.origin
-            .replace(/https?(.*):42\d\d/, 'https$1:8443');
-    }
-    nodeWsRootAddress = window.location.origin
-        .replace(/:42\d\d/, ':8080')
-        .replace(/.*\/\//, 'ws://');
-}
+const nodeRootAddress = browserWindowEnv.httpApiBaseUrl
+const nodeWsRootAddress = browserWindowEnv.wsApiBaseUrl
 
 export { nodeRootAddress, nodeWsRootAddress };
 

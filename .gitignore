@@ -15,6 +15,7 @@ back/docker/monitoring/grafana/grafana.db
 .env
 .env_*
 !.env_*.sample
+front/env.js
 
 
 back/logs/*

@@ -48,7 +48,7 @@ function getOauthUrl({ type }) {
     }
     let url = urls[type]()
     if (!url) {
-        emitError(errorCodes.unknownError)
+        emitError(errorCodes.unknownError);
     }
     return url
 }
