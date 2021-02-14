@@ -7,9 +7,10 @@ import basicAuth from 'express-basic-auth'
 import cors from 'cors'
 import config from './config.js'
 import { WebSocketHandler } from './lib/utils/webSocketHandler.js'
-import sharedSocketHandler from './lib/routers/sharedSocketHandler.js'
+import { handleWsRpcConnection } from './lib/routers/handler_ws.js'
+import { handleHttpRpcRequest } from './lib/routers/handler_http.js'
 import { exportMetricsMiddleware } from './lib/use_cases/metrics.js'
-import { handleHttpRpcRequest } from './lib/routers/httpRpcHandler.js'
+
 
 const app = express()
 
@@ -31,7 +32,7 @@ app.use(express.static(`${config.indexPath}/public`, {
 }))
 
 
-wsApp.on('/api/sharedSocket', sharedSocketHandler.handleConnection)
+wsApp.on('/api/sharedSocket', handleWsRpcConnection)
 app.post('/api/rpc', handleHttpRpcRequest)
 
 

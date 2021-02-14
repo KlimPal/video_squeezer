@@ -7,7 +7,7 @@ import config from '../../config.js'
 import {
     errorCodes, emitError, SwsError, livrValidate, validateSession,
 } from '../utils/error_utils.js'
-import methods from './sharedSocketRoutes.js'
+import methods from './rpc_routes.js'
 import cf from '../utils/cf.js'
 
 
@@ -15,7 +15,7 @@ const gzip = util.promisify(zlib.gzip)
 const sharedSocketClients = new Set()
 
 
-function handleConnection(ws, req) {
+function handleWsRpcConnection(ws, req) {
     try {
         let context = {
             ip: getClientIpByExpressReq(req),
@@ -112,10 +112,10 @@ async function sendEvent({
 
 export {
     sendEvent,
-    handleConnection,
+    handleWsRpcConnection,
 }
 
 export default {
-    handleConnection,
+    handleWsRpcConnection,
     sendEvent,
 }

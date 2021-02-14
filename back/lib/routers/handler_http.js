@@ -7,7 +7,7 @@ import config from '../../config.js'
 import {
     errorCodes, emitError, SwsError, livrValidate, validateSession,
 } from '../utils/error_utils.js'
-import methods from './sharedSocketRoutes.js'
+import methods from './rpc_routes.js'
 import cf from '../utils/cf.js'
 
 
@@ -22,9 +22,10 @@ async function handleHttpRpcRequest(req, res) {
         sessionId: null,
     }
 
-    const msg = req.body
-    console.log(msg)
-
+    const msg = livrValidate({
+        method: ['required', 'string'],
+        data: ['required'],
+    }, req.body)
     let endDurationMetric = customMetrics.sharedSocketRequestDuration.startTimer()
 
     try {
