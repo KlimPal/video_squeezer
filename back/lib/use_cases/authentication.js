@@ -38,9 +38,7 @@ function getGoogleOauthUrl() {
 
 getOauthUrl.public = true
 getOauthUrl.rules = {
-    type: {
-        one_of: ['google'],
-    },
+    type: ['required', { one_of: ['google'] }],
 }
 function getOauthUrl({ type }) {
     const urls = {

@@ -9,6 +9,7 @@ import config from './config.js'
 import { WebSocketHandler } from './lib/utils/webSocketHandler.js'
 import sharedSocketHandler from './lib/routers/sharedSocketHandler.js'
 import { exportMetricsMiddleware } from './lib/use_cases/metrics.js'
+import { handleHttpRpcRequest } from './lib/routers/httpRpcHandler.js'
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.use(express.static(`${config.indexPath}/public`, {
 
 
 wsApp.on('/api/sharedSocket', sharedSocketHandler.handleConnection)
+app.post('/api/rpc', handleHttpRpcRequest)
 
 
 app.get('/api/metrics', basicAuth({ users: { admin: config.monitoringPassword } }), exportMetricsMiddleware)
