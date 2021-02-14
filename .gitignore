@@ -23,3 +23,4 @@ back/logs/*
 
 back/tmp/*
 !back/tmp/.gitkeep
+front/src/env.js
