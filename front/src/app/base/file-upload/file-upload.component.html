@@ -9,10 +9,21 @@
         <span>
             Upload file
         </span>
-        <input type="file" class="qqq" id="fileUploadInput"
-               (change)="handleFileSelect($event)">
+        <input type="file" class="qqq" id="fileUploadInput" (change)="handleFileSelect($event)">
     </button><br>
     <div class="uploadStatus">
         {{uploadStatusText}}
     </div>
+    <br>
+    Size:
+    <div class="qqq field t1">
+        <mat-form-field>
+            <mat-select class="qqq dark">
+                <mat-option value="option1" class="qqq dark">Option 1</mat-option>
+                <mat-option value="option2" class="qqq dark">Option 2 (disabled)</mat-option>
+                <mat-option value="option3" class="qqq dark">Option 3</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
 </div>

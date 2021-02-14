@@ -1,3 +1,4 @@
+
 .qqq_theme .qqq.field .mat-input-element:disabled {
     color: rgba(0, 0, 0, 0.5);
 }
@@ -55,6 +56,7 @@
     padding-top: 3px;
     color: rgba(0, 0, 0, 0.6);
 }
+
 
 
 
@@ -156,3 +158,20 @@
 .qqq_theme .mat-form-field.mat-focused .mat-form-field-ripple {
     background: var(--primary600);
 }
+
+
+.mat-option.qqq{
+    height: 40px !important;
+}
+.mat-option.qqq.dark{
+    background: var(--gray300) !important;
+    color: var(--gray900) !important;
+}
+
+.mat-option.qqq.dark.mat-active{
+    background: var(--gray400) !important;
+}
+.mat-option.qqq.dark:hover{
+    background: var(--gray500) !important;
+}
+

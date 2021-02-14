@@ -72,4 +72,4 @@ const modules = [
     imports: modules,
     exports: modules,
 })
-export class MatModule {}
+export class MatModule { }

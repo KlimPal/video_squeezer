@@ -5,7 +5,7 @@
     width: 100%;
     background: var(--gray750);
     justify-content: center;
-    color: var(--gray100);
+    color: var(--gray400);
     overflow: auto;
 }
 
@@ -18,5 +18,27 @@
     padding-bottom:
 }
 .uploadStatus{
+    color: var(--gray400);
+}
+
+.qqq.field>>>.mat-form-field-flex {
+    background: var(--gray800);
+    border-radius: 4px;
+    border: solid 1px var(--cyan500);
+}
+
+.qqq.field>>>.mat-focused .mat-form-field-flex {
+    background: var(--gray900);
+}
+
+.qqq.field>>>.mat-input-element {
+    caret-color: var(--cyan500);
+}
+
+.qqq.field>>>.mat-select-value-text{
+    color: var(--gray300)
+}
+
+.qqq.field>>>.mat-select-arrow{
     color: var(--gray400);
 }
