@@ -26,7 +26,7 @@ app.use(bodyParser.json({ limit: '10mb' }))
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
 
 
-app.use(express.static(`${config.indexPath}/public`, {
+app.use(express.static(`${config.indexPath}/public/app_dist`, {
     extensions: ['html'],
     maxAge: '1w',
 }))

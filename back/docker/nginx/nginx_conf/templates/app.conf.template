@@ -54,7 +54,7 @@ server {
     include /etc/nginx/conf.d/common/ssl_common.conf;
 
     location / {
-        alias /var/www/video-squeezer-web-app/;
+        alias /var/www/video-squeezer-web-app/app_dist;
         try_files $uri /index.html index.html;
     }
 
