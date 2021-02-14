@@ -99,6 +99,9 @@
 .qqq_theme .qqq.field.width150 mat-form-field {
     width: 150px;
 }
+.qqq_theme .qqq.field.width170 mat-form-field {
+    width: 170px;
+}
 
 .qqq_theme .qqq.field.width200 mat-form-field {
     width: 200px;

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { sendWsMsg } from '../../utils/sharedSocket'
 import { msgUtils, http, cryptoUtils } from '../../utils/cf'
+import _ from 'lodash'
 
 @Component({
     selector: 'app-file-upload',
@@ -9,13 +10,43 @@ import { msgUtils, http, cryptoUtils } from '../../utils/cf'
 })
 export class FileUploadComponent implements OnInit {
 
-    constructor() {}
+    constructor() { }
 
-    ngOnInit(): void {}
+    ngOnInit(): void { }
     fileUploadingNow = false;
     uploadStatusText = ''
 
+    videoSizeOptions = [
+        { value: '240', label: '240p' },
+        { value: '480', label: '480p' },
+        { value: '576', label: '576p' },
+        { value: '720', label: '720p HD' },
+        { value: '1080', label: '1080p Full HD' },
+        { value: '2160', label: '2160p 4K' }
+    ]
+    crfOptions = [
+        { value: '29', label: 'Very Low' },
+        { value: '26', label: 'Low' },
+        { value: '23', label: 'Medium' },
+        { value: '20', label: 'High' },
+        { value: '17', label: 'Very High' },
+    ]
+
+
+    //_.range(17, 28).map(n => ({
+    //     value: n,
+    //     label: `${n}`
+    // }))
+
+    jobOptions = {
+        size: '720',
+        crf: '23'
+    }
+
+
     async handleFileSelect(event) {
+        console.log(this.jobOptions);
+
         let file = event.target.files[0];
         if (!file) {
             return;
@@ -67,7 +98,7 @@ export class FileUploadComponent implements OnInit {
 
         for (let i = 0; i < uploadParts.length; i++) {
             let part = uploadParts[i]
-            this.uploadStatusText = `uploading ${i+1}/${uploadParts.length} chunk`
+            this.uploadStatusText = `uploading ${i + 1}/${uploadParts.length} chunk`
             if (part.status === 'UPLOADED') {
                 continue
             }

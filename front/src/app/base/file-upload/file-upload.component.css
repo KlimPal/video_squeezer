@@ -14,11 +14,18 @@
 .wrapper {
     background: rgba(255, 255, 255, 0);
     padding: 10px;
-    margin-top: 40vh;
+    margin-top: 30vh;
     padding-bottom:
 }
 .uploadStatus{
     color: var(--gray400);
+}
+.crfValue{
+    color: var(--gray200)
+}
+
+.crfSlider{
+    width: 170px;
 }
 
 .qqq.field>>>.mat-form-field-flex {

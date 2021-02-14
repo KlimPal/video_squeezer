@@ -1,5 +1,5 @@
 <div class="wrapper">
-    <button class="qqq green t2 padding10_20" [disabled]="fileUploadingNow">
+    <button class="qqq gray t2 padding10_20" [disabled]="fileUploadingNow">
         <label for="fileUploadInput" class="fileInputLabel" *ngIf="!fileUploadingNow">
         </label>
         <mat-icon *ngIf="!fileUploadingNow">cloud_upload </mat-icon>
@@ -18,12 +18,43 @@
     Size:
     <div class="qqq field t1">
         <mat-form-field>
-            <mat-select class="qqq dark">
-                <mat-option value="option1" class="qqq dark">Option 1</mat-option>
-                <mat-option value="option2" class="qqq dark">Option 2 (disabled)</mat-option>
-                <mat-option value="option3" class="qqq dark">Option 3</mat-option>
+            <mat-select class="qqq dark" [(ngModel)]="jobOptions.size">
+                <mat-option *ngFor="let item of videoSizeOptions" [value]="item.value" class="qqq dark">
+                    {{item.label}}
+                </mat-option>
             </mat-select>
         </mat-form-field>
     </div>
+    <br>
+
+    Quality:
+    <div class="qqq field t1 width100">
+        <mat-form-field>
+            <mat-select class="qqq dark" [(ngModel)]="jobOptions.crf">
+                <mat-option *ngFor="let item of crfOptions" [value]="item.value" class="qqq dark">
+                    {{item.label}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    *CRF {{jobOptions.crf}}
+    <br>
+    <button class="qqq green t2 m1 marginTop20 padding10_30" [disabled]="true">
+        <mat-icon>compress</mat-icon>
+        <span>Compress</span>
+    </button>
+
+
+
+    <!-- <div class="qqq field t1">
+        <mat-form-field>
+            <mat-select class="qqq dark" [(ngModel)]="jobOptions.size">
+                <mat-option *ngFor="let item of videoSizeOptions" [value]="item.value" class="qqq dark">
+                    {{item.label}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div> -->
+
 
 </div>
