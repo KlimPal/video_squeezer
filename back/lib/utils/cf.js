@@ -2,8 +2,9 @@ import _ from 'lodash'
 import crypto from 'crypto'
 import livr from 'livr'
 import flatten from 'flat'
-import pino from 'pino'
 import livrExtraRules from 'livr-extra-rules'
+
+import { logger } from './pinoLogger.js'
 
 livr.Validator.defaultAutoTrim(true)
 livr.Validator.registerDefaultRules(livrExtraRules)
@@ -124,12 +125,6 @@ function fillTemplate(str, map) {
     return str
 }
 
-const logger = pino({
-    timestamp: pino.stdTimeFunctions.isoTime,
-}, pino.destination({
-    dest: `logs/${new Date().toISOString().split('T')[0]}.log`,
-    sync: false,
-}))
 
 function pipeToFinish(...streams) {
     return new Promise((resolve, reject) => {

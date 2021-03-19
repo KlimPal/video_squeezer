@@ -12,23 +12,25 @@ let testObservable
 //         subscriber.next('hello')
 //     }
 // })
-testObservable = rx.interval(100)
-
-let start = Date.now()
 
 
-let testObservable1 = testObservable
-    .pipe(
-        rxop.skipWhile((x) => x < 20),
-        rxop.sampleTime(300),
-        rxop.take(101),
-        rxop.bufferCount(5),
-    ).subscribe({
-        next(x) {
-            console.log(x)
-        },
-        complete() {
-        // console.log(Date.now() - start)
-        },
-    })
+// testObservable = rx.interval(100)
+
+// let start = Date.now()
+
+
+// let testObservable1 = testObservable
+//     .pipe(
+//         rxop.skipWhile((x) => x < 20),
+//         rxop.sampleTime(300),
+//         rxop.take(101),
+//         rxop.bufferCount(5),
+//     ).subscribe({
+//         next(x) {
+//             console.log(x)
+//         },
+//         complete() {
+//         // console.log(Date.now() - start)
+//         },
+//     })
 

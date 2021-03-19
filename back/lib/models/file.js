@@ -116,7 +116,7 @@ class File extends BaseModel {
         await Promise.all([...sourceList, targetPath].map((el) => fs.remove(el)))
         await this.$query().patchAndFetch({
             status: File.STATUSES.UPLOAD_COMPLETED,
-            size: stat.size
+            size: stat.size,
         })
         await Promise.all(allParts.map((part) => part.$query().delete()))
 

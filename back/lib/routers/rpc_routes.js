@@ -22,7 +22,7 @@ const methods = {
 }
 
 
-getApiRules.public = true;
+getApiRules.public = true
 function getApiRules() {
     let doc = {
         ...methods,

@@ -122,7 +122,7 @@ async function getPartialUpload(data, { context }) {
         authorId: context.userId,
         hash: data.fileHash,
         status: File.STATUSES.PARTIAL_UPLOAD_STARTED,
-        size: data.fileSize
+        size: data.fileSize,
     })
 
     let partsNumber = Math.ceil(data.fileSize / partSize)
@@ -155,5 +155,5 @@ async function getPartialUpload(data, { context }) {
 }
 
 export {
-    getPresignedPutObjectUrl, getPartialUpload, completeFilePart, completePartialUpload, getOwnFiles
+    getPresignedPutObjectUrl, getPartialUpload, completeFilePart, completePartialUpload, getOwnFiles,
 }

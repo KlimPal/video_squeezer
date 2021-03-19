@@ -10,5 +10,5 @@ const { Model } = objection
 Model.knex(knex)
 
 export {
-    User, File, Document, FilePart
+    User, File, Document, FilePart,
 }

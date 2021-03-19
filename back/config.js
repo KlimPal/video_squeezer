@@ -44,7 +44,7 @@ let s3 = {
     endPoint: process.env.S3_END_POINT,
     port: Number(process.env.S3_PORT),
     publicBaseUrl: process.env.S3_PUBLIC_BASE_URL,
-    useSSL: process.env.S3_USE_SSL === 'true'
+    useSSL: process.env.S3_USE_SSL === 'true',
 }
 
 let imgproxyPublicBaseUrl = process.env.IMGPROXY_PUBLIC_BASE_URL

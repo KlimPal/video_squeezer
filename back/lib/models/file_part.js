@@ -60,7 +60,6 @@ class FilePart extends BaseModel {
         url = url.replace(/[^/]*\/\/[^/]*\//, `${config.s3.publicBaseUrl}/`)
         return url
     }
-
 }
 
 export default FilePart

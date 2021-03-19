@@ -26,6 +26,9 @@ function handleWsRpcConnection(ws, req) {
         sharedSocketClients.add(clientInfo)
 
         ws.on('message', async (msg = '') => {
+            const traceId = cf.generateUniqueCode(16)
+            const defaultLogData = { traceId, userId: context.userId, method: msg.method }
+
             let endDurationMetric = customMetrics.sharedSocketRequestDuration.startTimer()
             try {
                 try {
@@ -46,6 +49,10 @@ function handleWsRpcConnection(ws, req) {
                 if (method.rules) {
                     data = livrValidate(method.rules, data)
                 }
+                cf.logger.info({
+                    ...defaultLogData, data, type: 'API_CALL',
+                }, 'API call')
+
                 let result = await method(_.cloneDeep(data), { context, msg })
                 let response = JSON.stringify({
                     data: {
@@ -59,18 +66,27 @@ function handleWsRpcConnection(ws, req) {
 
 
                 ws.send(response)
-                cf.logger.info({
-                    userId: context.userId, method: msg.method, data, type: 'API_CALL',
-                })
+
+                cf.logger.debug({
+                    ...defaultLogData, data: result, type: 'API_RESPONSE',
+                }, 'API response')
             } catch (err) {
                 let data = { error: errorCodes.unknownError }
 
                 if (err instanceof SwsError) {
                     data.error = err.errorCode
                     data.details = err.details
+
+                    cf.logger.debug({
+                        ...defaultLogData, data, type: 'API_RESPONSE',
+                    }, 'API response (error)')
                 } else {
                     console.error(err)
+                    cf.logger.error({
+                        ...defaultLogData, error: err, type: 'API_RESPONSE',
+                    }, 'API response (unknown error)')
                 }
+
 
                 ws.send(JSON.stringify({ data, id: msg.id }))
             }

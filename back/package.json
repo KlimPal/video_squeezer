@@ -6,10 +6,11 @@
     "scripts": {
         "lint": "eslint lib/ index.js config.js",
         "lint-fix": "eslint lib/ index.js config.js --fix",
-        "start": "npx nodemon --delay 1000ms --watch lib index.js",
+        "start": "PINO_LOG_TO_FILE=logs/default.log PINO_LOG_LEVEL=debug nodemon --watch lib index.js",
         "test": "$(npm bin)/jest --verbose --forceExit",
         "prod": "googleCallbackAddress=https://incidents.klimpal.com/authentication/google/callback webAppBaseUrl=https://incidents.klimpal.com node index.js",
-        "db-remigrate-latest": "npx knex --esm --cwd lib/services/knex/  migrate:down && npx knex --esm --cwd lib/services/knex/  migrate:latest"
+        "db-remigrate-latest": "npx knex --esm --cwd lib/services/knex/  migrate:down && npx knex --esm --cwd lib/services/knex/  migrate:latest",
+        "tail-logs": "tail -f logs/default.log | pino-pretty"
     },
     "author": "",
     "license": "ISC",

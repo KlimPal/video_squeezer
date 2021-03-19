@@ -17,5 +17,4 @@ export async function concatFiles(filePathList, target) {
     if (!await fs.pathExists(target)) {
         throw new Error('Something went wrong. Target file not found.')
     }
-
 }
