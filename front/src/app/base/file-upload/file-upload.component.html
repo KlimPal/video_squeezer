@@ -14,11 +14,17 @@
     <div class="uploadStatus">
         {{uploadStatusText}}
     </div>
+
+    <div *ngIf="fileInfo.name">
+        <br>
+        Selected: <b>{{fileInfo.name}}</b> ({{fileInfo.sizeAsString}})
+    </div>
+
     <br>
     Size:
     <div class="qqq field t1">
         <mat-form-field>
-            <mat-select class="qqq dark" [(ngModel)]="jobOptions.size">
+            <mat-select class="qqq dark" [(ngModel)]="compressOptions.size">
                 <mat-option *ngFor="let item of videoSizeOptions" [value]="item.value" class="qqq dark">
                     {{item.label}}
                 </mat-option>
@@ -30,31 +36,24 @@
     Quality:
     <div class="qqq field t1 width100">
         <mat-form-field>
-            <mat-select class="qqq dark" [(ngModel)]="jobOptions.crf">
+            <mat-select class="qqq dark" [(ngModel)]="compressOptions.crf">
                 <mat-option *ngFor="let item of crfOptions" [value]="item.value" class="qqq dark">
                     {{item.label}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
     </div>
-    *CRF {{jobOptions.crf}}
+    *CRF {{compressOptions.crf}}
     <br>
-    <button class="qqq green t2 m1 marginTop20 padding10_30" [disabled]="true">
+
+
+
+    <button class="qqq green t2 m1 marginTop20 padding10_30" (click)="compressVideo()" [disabled]="isButtonCompressDisabled">
         <mat-icon>compress</mat-icon>
         <span>Compress</span>
     </button>
 
 
-
-    <!-- <div class="qqq field t1">
-        <mat-form-field>
-            <mat-select class="qqq dark" [(ngModel)]="jobOptions.size">
-                <mat-option *ngFor="let item of videoSizeOptions" [value]="item.value" class="qqq dark">
-                    {{item.label}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div> -->
 
 
 </div>

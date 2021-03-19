@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { sendWsMsg } from '../../utils/sharedSocket'
-import { msgUtils, http, cryptoUtils } from '../../utils/cf'
+import { msgUtils, http, cryptoUtils, cf } from '../../utils/cf'
 import _ from 'lodash'
 
 @Component({
@@ -38,19 +38,45 @@ export class FileUploadComponent implements OnInit {
     //     label: `${n}`
     // }))
 
-    jobOptions = {
+    compressOptions = {
         size: '720',
-        crf: '23'
+        crf: '23',
     }
 
+    fileInfo = {
+        id: null,
+        name: null,
+        size: 0,
+        sizeAsString: ''
+    }
+
+    isButtonCompressDisabled=true;
+
+    async compressVideo(){
+        let res = await sendWsMsg('video.compress', {
+            fileId: this.fileInfo.id,
+            compressOptions: this.compressOptions
+        })
+        console.log(res);
+
+        if (!res.result) {
+            msgUtils.alert(res.error || 'error', { details: res.details })
+        } else {
+            msgUtils.alert('done', { details: res.result })
+        }
+
+    }
 
     async handleFileSelect(event) {
-        console.log(this.jobOptions);
+        //console.log(this.jobOptions);
 
         let file = event.target.files[0];
         if (!file) {
             return;
         }
+        this.fileInfo.name = file.name;
+        this.fileInfo.sizeAsString = cf.getFriendlyFileSize(file.size)
+
         this.fileUploadingNow = true
 
         let res = await sendWsMsg('files.getOwnFiles', {})
@@ -83,10 +109,17 @@ export class FileUploadComponent implements OnInit {
         res = await sendWsMsg('files.getPartialUpload', {
             fileHash: hash,
             fileSize: file.size,
+            fileName: file.name,
         })
 
         if (!res.result) {
-            msgUtils.alert(res.error || 'error', { details: res.details })
+            if(res.error === 'ALREADY_EXISTS' && res.details.id){
+                this.fileInfo.id = res.details.id
+                this.isButtonCompressDisabled = false
+            }else{
+                msgUtils.alert(res.error || 'error', { details: res.details })
+            }
+
             this.uploadStatusText = '';
             this.fileUploadingNow = false
             return
@@ -114,6 +147,7 @@ export class FileUploadComponent implements OnInit {
         this.uploadStatusText = 'merging chunks';
         res = await sendWsMsg('files.completePartialUpload', {
             fileId,
+            fileName: file.name
         })
 
         if (!res.result) {
@@ -122,7 +156,9 @@ export class FileUploadComponent implements OnInit {
             this.fileUploadingNow = false
             return
         } else {
-            msgUtils.alert('done', { details: res.result })
+            this.fileInfo.id = res.result.id
+            this.isButtonCompressDisabled = false
+            // msgUtils.alert('done', { details: res.result })
         }
 
         // await http.putFileUsingPresignedUrl(url, file)

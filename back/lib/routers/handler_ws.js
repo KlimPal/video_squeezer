@@ -27,7 +27,7 @@ function handleWsRpcConnection(ws, req) {
 
         ws.on('message', async (msg = '') => {
             const traceId = cf.generateUniqueCode(16)
-            const defaultLogData = { traceId, userId: context.userId, method: msg.method }
+            const defaultLogData = { traceId, userId: context.userId }
 
             let endDurationMetric = customMetrics.sharedSocketRequestDuration.startTimer()
             try {
@@ -36,6 +36,7 @@ function handleWsRpcConnection(ws, req) {
                 } catch {
                     emitError(errorCodes.jsonParseError)
                 }
+                defaultLogData.method = msg.method
 
                 if (!msg.method || !methods[msg.method]) {
                     emitError(errorCodes.invalidMethod)

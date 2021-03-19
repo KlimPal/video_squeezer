@@ -1,21 +1,23 @@
-import * as modules from '../use_cases/_index.js'
+import * as useCases from '../use_cases/_index.js'
 
 const methods = {
     ping: async () => 'pong',
-    'user.get': modules.user.getUser,
-    'user.updateProfileInfo': modules.user.updateProfileInfo,
-    'user.getClientConfig': modules.user.getClientConfig,
+    'user.get': useCases.user.getUser,
+    'user.updateProfileInfo': useCases.user.updateProfileInfo,
+    'user.getClientConfig': useCases.user.getClientConfig,
 
-    'authentication.getOauthUrl': modules.authentication.getOauthUrl,
-    'authentication.checkSession': modules.authentication.checkSession,
-    'authentication.getToken': modules.authentication.getToken,
-    'authentication.logout': modules.authentication.logout,
+    'authentication.getOauthUrl': useCases.authentication.getOauthUrl,
+    'authentication.checkSession': useCases.authentication.checkSession,
+    'authentication.getToken': useCases.authentication.getToken,
+    'authentication.logout': useCases.authentication.logout,
 
-    'files.getPresignedPutObjectUrl': modules.files.getPresignedPutObjectUrl,
-    'files.getPartialUpload': modules.files.getPartialUpload,
-    'files.completeFilePart': modules.files.completeFilePart,
-    'files.completePartialUpload': modules.files.completePartialUpload,
-    'files.getOwnFiles': modules.files.getOwnFiles,
+    'files.getPresignedPutObjectUrl': useCases.files.getPresignedPutObjectUrl,
+    'files.getPartialUpload': useCases.files.getPartialUpload,
+    'files.completeFilePart': useCases.files.completeFilePart,
+    'files.completePartialUpload': useCases.files.completePartialUpload,
+    'files.getOwnFiles': useCases.files.getOwnFiles,
+
+    'video.compress': useCases.video.compress,
 
 
     getApiRules,
