@@ -7,10 +7,12 @@ import util from 'util'
 import cf from '../utils/cf.js'
 import config from '../../config.js'
 import { minioClient } from '../services/minio.js'
+import { logger } from '../utils/pino_logger.js'
 
 const exec = util.promisify(childProcess.exec)
 
 async function convertVideo({
+    jobId,
     jobData: {
         sourceBucket,
         sourceKey,
@@ -23,26 +25,23 @@ async function convertVideo({
 }) {
     const start = Date.now()
 
-    const result = { a: 'ok' }
-    // const prefix = cf.generateUniqueCode()
-    // const videoParts = sourceUrls.map((sourceUrl, i) => ({
-    //     sourceUrl,
-    //     localPath: path.join(config.tmpDirPath, `${prefix}_${i}${sourceExtension}`),
-    // }))
-    // const fileListPath = path.join(config.tmpDirPath, `${prefix}_list.txt`)
-    // const outputPath = path.join(config.tmpDirPath, `${prefix}_output${sourceExtension}`)
-    // let result = null
+    const result = { bucket: targetBucket, key: targetKey }
 
 
-    // let filesToRemove = [
-    //     ...videoParts.map(({ localPath }) => localPath),
-    //     fileListPath,
-    //     outputPath,
-    // ]
-    // console.log(`\nStart job #${prefix}`)
-    // console.log(`targetBucket: ${targetBucket}`)
-    // console.log(`targetKey: ${targetKey}`)
+    const tmpSourceFileName = `${cf.generateUniqueCode(24)}_${sourceExtension}`
+    const tmpSourcePath = path.join(config.tmpDirPath, tmpSourceFileName)
 
+    const downloadStartAt = Date.now()
+    await minioClient.fGetObject(sourceBucket, sourceKey, tmpSourcePath)
+
+    const fileStat = await fs.stat(tmpSourcePath)
+    logger.info({
+        jobId,
+        action: 'DOWNLOAD_SOURCE_FILE',
+        fileSize: fileStat.size,
+        fileSizeAsString: cf.getFriendlyFileSize(fileStat.size),
+        duration: Date.now() - downloadStartAt,
+    }, 'Job in progress')
 
     // try {
     //     const progressState = {

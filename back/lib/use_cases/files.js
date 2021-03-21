@@ -11,14 +11,14 @@ async function getPresignedPutObjectUrl(data, { context }) {
     const fileId = cf.generateUniqueCode()
     const objectName = cf.generateUniqueCode(24)
 
-    let file = await File.query().insert({
+    const file = await File.query().insert({
         id: fileId,
         bucket: fileApi.defaultBucket,
         objectName,
         authorId: context.userId,
     })
 
-    let url = await file.getPresignedPutUrl(expiryInMs)
+    const url = await file.getPresignedPutUrl(expiryInMs)
 
     return {
         url,
@@ -31,7 +31,7 @@ getOwnFiles.rules = {
 }
 
 async function getOwnFiles(data, { context }) {
-    let files = await File.query().where({
+    const files = await File.query().where({
         authorId: context.userId,
     })
     return files
@@ -43,12 +43,12 @@ completePartialUpload.rules = {
 }
 
 async function completePartialUpload(data, { context }) {
-    let file = await File.query().findById(data.fileId)
+    const file = await File.query().findById(data.fileId)
     if (file.authorId !== context.userId) {
         emitError(errorCodes.notPermitted)
     }
     if (await file.isAllPartsUploaded()) {
-        return await file.completePartialUpload()
+        return file.completePartialUpload()
     }
     return this
 }
@@ -59,12 +59,12 @@ completeFilePart.rules = {
 
 
 async function completeFilePart(data, { context }) {
-    let filePart = await FilePart.query().findById(data.filePartId)
+    const filePart = await FilePart.query().findById(data.filePartId)
     if (!filePart) {
         emitError(errorCodes.notFound)
     }
 
-    let file = await File.query().findById(filePart.fileId)
+    const file = await File.query().findById(filePart.fileId)
 
     if (file.authorId !== context.userId) {
         emitError(errorCodes.notPermitted)
@@ -80,6 +80,7 @@ async function completeFilePart(data, { context }) {
 getPartialUpload.rules = {
     fileSize: ['required', 'positive_integer'],
     fileHash: ['required', 'string'],
+    fileName: ['required', 'string', { max_length: 255 }],
 }
 
 
@@ -92,7 +93,7 @@ async function getPartialUpload(data, { context }) {
 
     const presignedLinkExpiryInMs = 1000 * 60 * 60 * 24 // 1 day
 
-    let existingFile = await File.query().findOne({
+    const existingFile = await File.query().findOne({
         authorId: context.userId,
         hash: data.fileHash,
     }).withGraphFetched('fileParts')
@@ -101,7 +102,7 @@ async function getPartialUpload(data, { context }) {
         if (existingFile.status === File.STATUSES.UPLOAD_COMPLETED) {
             emitError(errorCodes.alreadyExists, existingFile)
         }
-        let uploadParts = await Promise.all(existingFile.fileParts.map(async (filePart) => ({
+        const uploadParts = await Promise.all(existingFile.fileParts.map(async (filePart) => ({
             rangeStart: filePart.rangeStart,
             rangeEnd: filePart.rangeEnd,
             status: filePart.status,
@@ -115,7 +116,7 @@ async function getPartialUpload(data, { context }) {
         }
     }
 
-    let file = await File.query().insert({
+    const file = await File.query().insert({
         id: cf.generateUniqueCode(),
         bucket: fileApi.defaultBucket,
         objectName: cf.generateUniqueCode(24),
@@ -123,10 +124,11 @@ async function getPartialUpload(data, { context }) {
         hash: data.fileHash,
         status: File.STATUSES.PARTIAL_UPLOAD_STARTED,
         size: data.fileSize,
+        originalFileName: data.fileName,
     })
 
-    let partsNumber = Math.ceil(data.fileSize / partSize)
-    let filePartsData = Array(partsNumber).fill().map((_, partIndex) => ({
+    const partsNumber = Math.ceil(data.fileSize / partSize)
+    const filePartsData = Array(partsNumber).fill().map((_, partIndex) => ({
         id: cf.generateUniqueCode(),
         bucket: fileApi.defaultBucket,
         fileId: file.id,
@@ -135,12 +137,12 @@ async function getPartialUpload(data, { context }) {
         objectName: `${file.objectName}_parts/${cf.generateUniqueCode(24)}`,
         status: FilePart.STATUSES.CREATED,
     }))
-    let lastPart = filePartsData.slice(-1)[0]
+    const lastPart = filePartsData.slice(-1)[0]
     lastPart.rangeEnd = data.fileSize
 
-    let fileParts = await FilePart.query().insert(filePartsData)
+    const fileParts = await FilePart.query().insert(filePartsData)
 
-    let uploadParts = await Promise.all(fileParts.map(async (filePart) => ({
+    const uploadParts = await Promise.all(fileParts.map(async (filePart) => ({
         rangeStart: filePart.rangeStart,
         rangeEnd: filePart.rangeEnd,
         filePartId: filePart.id,

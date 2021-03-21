@@ -17,6 +17,7 @@ class File extends BaseModel {
     createdAt
     updatedAt
     status
+    originalFileName
 
     static STATUSES = {
         PARTIAL_UPLOAD_STARTED: 'PARTIAL_UPLOAD_STARTED',
@@ -54,16 +55,17 @@ class File extends BaseModel {
         }
     }
 
-    static async create(stringOrBufferOrStream, { metaData = null, authorId = null } = {}) {
-        let objectName = cf.generateUniqueCode(24)
+    static async create(stringOrBufferOrStream, { metaData = null, authorId = null, originalFileName } = {}) {
+        const objectName = cf.generateUniqueCode(24)
         await minioClient.putObject(defaultBucket, objectName, stringOrBufferOrStream, metaData)
-        let stat = await minioClient.statObject(defaultBucket, objectName)
+        const stat = await minioClient.statObject(defaultBucket, objectName)
         return File.query().insert({
             objectName,
             bucket: defaultBucket,
             metaData,
             authorId,
             size: stat.size,
+            originalFileName,
         })
     }
     getStream() {
@@ -74,6 +76,10 @@ class File extends BaseModel {
     }
     get publicUrlTemplate() {
         return `{{S3_PUBLIC_BASE_URL}}/${this.bucket}/${this.objectName}`
+    }
+
+    get extension() {
+        return path.extname(this.originalFileName)
     }
 
     async getPresignedPutUrl(expiryInMs = 1000 * 60) {
@@ -88,7 +94,7 @@ class File extends BaseModel {
     }
 
     async isAllPartsUploaded() {
-        let oneNotUploaded = await FilePart.query().findOne({
+        const oneNotUploaded = await FilePart.query().findOne({
             fileId: this.id,
             status: FilePart.STATUSES.CREATED,
         })
@@ -103,21 +109,21 @@ class File extends BaseModel {
             return this
         }
 
-        let allParts = (await FilePart.query().where({
+        const allParts = (await FilePart.query().where({
             fileId: this.id,
         })).sort((a, b) => a.rangeStart - b.rangeStart)
 
-        let tmpDir = path.join(config.indexPath, 'tmp')
-        let targetPath = path.join(tmpDir, this.id)
-        let sourceList = []
+        const tmpDir = path.join(config.indexPath, 'tmp')
+        const targetPath = path.join(tmpDir, this.id)
+        const sourceList = []
         await Promise.all(allParts.map(async (part) => {
-            let partLocalPath = path.join(tmpDir, part.id)
+            const partLocalPath = path.join(tmpDir, part.id)
             sourceList.push(partLocalPath)
             await cf.pipeToFinish(await part.getStream(), fs.createWriteStream(partLocalPath))
         }))
         await concatFiles(sourceList, targetPath)
         await minioClient.fPutObject(this.bucket, this.objectName, targetPath)
-        let stat = await minioClient.statObject(this.bucket, this.objectName)
+        const stat = await minioClient.statObject(this.bucket, this.objectName)
         await Promise.all([...sourceList, targetPath].map((el) => fs.remove(el)))
         await this.$query().patchAndFetch({
             status: File.STATUSES.UPLOAD_COMPLETED,

@@ -28,3 +28,5 @@ back/docker/redis_certs/
 
 workers/video_converter/logs/*
 !workers/video_converter/logs/.gitkeep
+workers/video_converter/tmp/*
+!workers/video_converter/tmp/.gitkeep

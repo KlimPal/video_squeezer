@@ -7,11 +7,11 @@ const indexPath = path.dirname(fileURLToPath(import.meta.url))
 
 dotenv.config({ path: path.join(indexPath, '.env') })
 
-let httpPort = process.env.HTTP_PORT || '8080'
-let httpsPort = process.env.HTTPS_PORT || '8443'
+const httpPort = process.env.HTTP_PORT || '8080'
+const httpsPort = process.env.HTTPS_PORT || '8443'
 
 
-let pgConnection = {
+const pgConnection = {
     host: process.env.PG_HOST,
     user: process.env.PG_USER,
     password: process.env.PG_PASSWORD,
@@ -20,25 +20,25 @@ let pgConnection = {
 }
 
 
-let webAppBaseUrl = process.env.webAppBaseUrl || 'http://localhost:4200'
-let { GOOGLE_CLIENT_ID } = process.env
-let { GOOGLE_CLIENT_SECRET } = process.env
-let googleCallbackAddress = process.env.googleCallbackAddress || 'http://localhost:4200/authentication/google/callback'
+const webAppBaseUrl = process.env.webAppBaseUrl || 'http://localhost:4200'
+const { GOOGLE_CLIENT_ID } = process.env
+const { GOOGLE_CLIENT_SECRET } = process.env
+const googleCallbackAddress = process.env.googleCallbackAddress || 'http://localhost:4200/authentication/google/callback'
 
-let vapidKeys = {
+const vapidKeys = {
     publicKey: process.env.VAPID_KEY_PUBLIC,
     privateKey: process.env.VAPID_KEY_PRIVATE,
 }
 
-let tgAuthBotToken = process.env.TG_AUTH_BOT_TOKEN
+const tgAuthBotToken = process.env.TG_AUTH_BOT_TOKEN
 
-let gracefulShutdownFuncList = []
+const gracefulShutdownFuncList = []
 
-let monitoringPassword = process.env.monitoringPassword || 'password'
+const monitoringPassword = process.env.monitoringPassword || 'password'
 
-let minWsMsgSizeToGzip = 1024 * 5 // 5KB
+const minWsMsgSizeToGzip = 1024 * 5 // 5KB
 
-let s3 = {
+const s3 = {
     accessKey: process.env.S3_ACCESS_KEY_ID,
     secretKey: process.env.S3_SECRET_KEY,
     endPoint: process.env.S3_END_POINT,
@@ -47,9 +47,9 @@ let s3 = {
     useSSL: process.env.S3_USE_SSL === 'true',
 }
 
-let imgproxyPublicBaseUrl = process.env.IMGPROXY_PUBLIC_BASE_URL
+const imgproxyPublicBaseUrl = process.env.IMGPROXY_PUBLIC_BASE_URL
 
-let templateReplacementMap = {
+const templateReplacementMap = {
     S3_PUBLIC_BASE_URL: s3.publicBaseUrl,
 }
 
@@ -64,7 +64,7 @@ const redis = {
 
 const bullQueues = {
     videoConverting: {
-        queueName: 'video_converting',
+        queueName: 'video_converting_input',
         host: redis.host,
         port: redis.port,
         password: redis.password,

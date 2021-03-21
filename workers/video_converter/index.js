@@ -22,20 +22,18 @@ logger.info({
 }, 'Service is started')
 
 videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
-    console.log(job.data)
-
     const rules = {
         sourceBucket: ['required', 'string'],
         sourceKey: ['required', 'string'],
         targetBucket: ['required', 'string'],
         targetKey: ['required', 'string'],
         sourceExtension: ['required', { one_of: ['.mov', '.mp4'] }],
-        convertingOptions: {
+        convertingOptions: ['required', {
             nested_object: {
                 height: ['required', 'integer'],
                 crf: ['required', 'integer'],
             },
-        },
+        }],
     }
     const validData = cf.livrValidate(rules, job.data)
 
@@ -46,6 +44,7 @@ videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
 
     const progress = percentage => job.progress(percentage)
     const result = await convertVideo({
+        jobId: job.id,
         jobData: validData,
         progressCallback: progress,
     })

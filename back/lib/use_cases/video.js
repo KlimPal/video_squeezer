@@ -1,4 +1,5 @@
 import sharp from 'sharp'
+import path from 'path'
 import cf from '../utils/cf.js'
 import config from '../../config.js'
 import {
@@ -24,26 +25,26 @@ async function compress(validData, { context }) {
 
     !file && emitError(errorCodes.notFound)
 
-    const urlExpireInMs = cf.getDurationInMs({
-        days: 7, // S3 limit: max is 7 days
-    })
+    const jobId = cf.generateUniqueCode() // sha256hex(JSON.stringify(validData))
 
-    let presignedGetUrl = file.getPresignedGetUrl(urlExpireInMs)
+    const targetKey = cf.generateUniqueCode(24)
 
-    const jobId = sha256hex(JSON.stringify(validData))
-    console.log(jobId)
-    videoConvertingQueue.add('input', {
-        fileId: validData.fileId,
-        presignedGetUrl,
-        options: {
-            height: validData.size,
-            crf: validData.crf,
+    const result = await videoConvertingQueue.add({
+        sourceBucket: file.bucket,
+        sourceKey: file.objectName,
+        targetBucket: file.bucket,
+        targetKey,
+        sourceExtension: file.extension,
+        convertingOptions: {
+            height: validData.compressOptions.size,
+            crf: validData.compressOptions.crf,
         },
     }, {
         jobId,
         // removeOnComplete: true,
         // removeOnFail: true,
     })
+    // console.log(result)
 
     return 'ok'
 }

@@ -50,9 +50,9 @@ export class FileUploadComponent implements OnInit {
         sizeAsString: ''
     }
 
-    isButtonCompressDisabled=true;
+    isButtonCompressDisabled = true;
 
-    async compressVideo(){
+    async compressVideo() {
         let res = await sendWsMsg('video.compress', {
             fileId: this.fileInfo.id,
             compressOptions: this.compressOptions
@@ -113,10 +113,10 @@ export class FileUploadComponent implements OnInit {
         })
 
         if (!res.result) {
-            if(res.error === 'ALREADY_EXISTS' && res.details.id){
+            if (res.error === 'ALREADY_EXISTS' && res.details.id) {
                 this.fileInfo.id = res.details.id
                 this.isButtonCompressDisabled = false
-            }else{
+            } else {
                 msgUtils.alert(res.error || 'error', { details: res.details })
             }
 
