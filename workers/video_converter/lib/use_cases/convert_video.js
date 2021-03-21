@@ -20,6 +20,7 @@ async function convertVideo({
         targetKey,
         sourceExtension,
         convertingOptions,
+        targetExtension,
     },
     progressCallback,
 }) {
@@ -50,7 +51,7 @@ async function convertVideo({
 
         const { crf, height, ffmpegPreset = 'veryfast' } = convertingOptions
 
-        const outputFileName = `${cf.generateUniqueCode(24)}_converted.mp4`
+        const outputFileName = `${cf.generateUniqueCode(24)}_converted${targetExtension}`
         const outputFilePath = path.join(config.tmpDirPath, outputFileName)
 
         filesToRemove.push(outputFilePath)

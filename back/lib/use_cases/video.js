@@ -34,7 +34,9 @@ async function compress(validData, { context }) {
 
     const jobId = cf.generateUniqueCode() // sha256hex(JSON.stringify(validData))
 
-    const targetKey = cf.generateUniqueCode(24)
+    const targetExtension = '.mp4'
+
+    const targetKey = `users/${userId}/converted/${cf.generateUniqueCode()}${targetExtension}`
 
     const targetFile = await File.query().insert({
         bucket: file.bucket,
@@ -52,6 +54,7 @@ async function compress(validData, { context }) {
         sourceKey: file.objectName,
         targetBucket: file.bucket,
         targetKey,
+        targetExtension,
         sourceExtension: file.extension,
         convertingOptions,
     }, {
