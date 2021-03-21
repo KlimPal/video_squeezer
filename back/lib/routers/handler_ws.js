@@ -17,12 +17,12 @@ const sharedSocketClients = new Set()
 
 function handleWsRpcConnection(ws, req) {
     try {
-        let context = {
+        const context = {
             ip: getClientIpByExpressReq(req),
             userId: null,
             sessionId: null,
         }
-        let clientInfo = { context, ws }
+        const clientInfo = { context, ws }
         sharedSocketClients.add(clientInfo)
 
         ws.on('message', async (msg = '') => {
@@ -30,7 +30,7 @@ function handleWsRpcConnection(ws, req) {
             const defaultLogData = { traceId, userId: context.userId }
             const startRequestTime = Date.now()
 
-            let endDurationMetric = customMetrics.sharedSocketRequestDuration.startTimer()
+            const endDurationMetric = customMetrics.sharedSocketRequestDuration.startTimer()
             try {
                 try {
                     msg = JSON.parse(msg)
@@ -43,7 +43,7 @@ function handleWsRpcConnection(ws, req) {
                     emitError(errorCodes.invalidMethod)
                 }
 
-                let method = methods[msg.method]
+                const method = methods[msg.method]
                 let { data } = msg
                 if (method.public !== true) {
                     validateSession(context)
@@ -55,7 +55,7 @@ function handleWsRpcConnection(ws, req) {
                     ...defaultLogData, data, type: 'API_CALL',
                 }, 'API call')
 
-                let result = await method(_.cloneDeep(data), { context, msg })
+                const result = await method(_.cloneDeep(data), { context, msg })
                 let response = JSON.stringify({
                     data: {
                         result,
@@ -76,7 +76,7 @@ function handleWsRpcConnection(ws, req) {
                     duration: Date.now() - startRequestTime,
                 }, 'API response')
             } catch (err) {
-                let data = { error: errorCodes.unknownError }
+                const data = { error: errorCodes.unknownError }
 
                 if (err instanceof SwsError) {
                     data.error = err.errorCode
@@ -127,12 +127,13 @@ async function sendEvent({
     if (broadcast) {
         clientsToNotify = allClient
     } else {
-        let clientsById = allClient.filter((el) => el.context && el.context.userId && userIdList.includes(el.context.userId))
-        let clientsBySessionId = allClient.filter((el) => el.context && el.context.sessionId && userIdList.includes(el.context.sessionId))
+        const clientsById = allClient.filter((el) => el.context && el.context.userId && userIdList.includes(el.context.userId))
+        const clientsBySessionId = allClient.filter((el) => el.context && el.context.sessionId && userIdList.includes(el.context.sessionId))
         clientsToNotify = [...clientsById, ...clientsBySessionId]
     }
-    let msg = JSON.stringify({ event: eventName, data })
-    for (let client of clientsToNotify) {
+
+    const msg = JSON.stringify({ event: eventName, data })
+    for (const client of clientsToNotify) {
         client.ws.send(msg)
     }
 }
