@@ -11,10 +11,14 @@
         "Concatenator",
         "Postgis",
         "SRID",
+        "bitnami",
         "dwithin",
         "jsonb",
         "livr",
-        "minio"
+        "minio",
+        "pino",
+        "postgres",
+        "serializers"
     ],
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true

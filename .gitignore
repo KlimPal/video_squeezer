@@ -25,3 +25,6 @@ back/tmp/*
 !back/tmp/.gitkeep
 front/src/env.js
 back/docker/redis_certs/
+
+workers/video_converter/logs/*
+!workers/video_converter/logs/.gitkeep

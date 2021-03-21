@@ -1,0 +1,19 @@
+# cp .env.sample .env
+# set the correct env variables
+# docker-compose -p video_converter -f compose.yaml up --build -d
+
+version: '3.6'
+
+volumes:
+    video_converter_tmp_data: {}
+
+services:
+  node:
+    build:
+      context: ../
+      dockerfile: ./docker/dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - 'video_converter_tmp_data:/usr/src/app/tmp'

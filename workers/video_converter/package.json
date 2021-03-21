@@ -4,11 +4,26 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint lib/ index.js config.js",
+    "lint-fix": "eslint lib/ index.js config.js --fix",
+    "start": "PINO_LOG_TO_FILE=logs/default.log PINO_LOG_LEVEL=debug nodemon --watch lib index.js",
+    "tail-logs": "tail -f logs/default.log | pino-pretty"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bull": "^3.21.1"
-  }
+    "babel-eslint": "^10.1.0",
+    "bull": "^3.21.1",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.22.0",
+    "fs-extra": "^9.1.0",
+    "livr": "^2.3.3",
+    "livr-extra-rules": "^1.2.1",
+    "minio": "^7.0.18",
+    "node-fetch": "^2.6.1",
+    "nodemon": "^2.0.7",
+    "pino": "^6.11.2",
+    "progress-stream": "^2.0.0"
+  },
+  "type": "module"
 }
