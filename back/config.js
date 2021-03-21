@@ -63,8 +63,17 @@ const redis = {
 }
 
 const bullQueues = {
-    videoConverting: {
+    videoConvertingInput: {
         queueName: 'video_converting_input',
+        host: redis.host,
+        port: redis.port,
+        password: redis.password,
+        tls: {
+            rejectUnauthorized: false,
+        },
+    },
+    videoConvertingOutput: {
+        queueName: 'video_converting_output',
         host: redis.host,
         port: redis.port,
         password: redis.password,

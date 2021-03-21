@@ -6,10 +6,16 @@ import {
     emitError,
     errorCodes,
 } from '../utils/error_utils.js'
-import { User, File } from '../models/_index.js'
+import {
+    User,
+    File,
+    VideoConvertingJob,
+} from '../models/_index.js'
 import { sha256hex } from '../utils/crypto.js'
 
-import { videoConverting as videoConvertingQueue } from '../services/bull_queues.js'
+import {
+    videoConvertingInput,
+} from '../services/bull_queues.js'
 
 compress.rules = {
     fileId: ['required', 'string'],
@@ -21,6 +27,7 @@ compress.rules = {
     },
 }
 async function compress(validData, { context }) {
+    const { userId } = context
     const file = await File.query().findById(validData.fileId)
 
     !file && emitError(errorCodes.notFound)
@@ -29,24 +36,46 @@ async function compress(validData, { context }) {
 
     const targetKey = cf.generateUniqueCode(24)
 
-    const result = await videoConvertingQueue.add({
+    const targetFile = await File.query().insert({
+        bucket: file.bucket,
+        objectName: targetKey,
+        authorId: userId,
+        status: File.STATUSES.NOT_UPLOADED,
+    })
+
+    const convertingOptions = {
+        height: validData.compressOptions.size,
+        crf: validData.compressOptions.crf,
+    }
+    await videoConvertingInput.add({
         sourceBucket: file.bucket,
         sourceKey: file.objectName,
         targetBucket: file.bucket,
         targetKey,
         sourceExtension: file.extension,
-        convertingOptions: {
-            height: validData.compressOptions.size,
-            crf: validData.compressOptions.crf,
-        },
+        convertingOptions,
     }, {
         jobId,
         // removeOnComplete: true,
         // removeOnFail: true,
     })
-    // console.log(result)
 
-    return 'ok'
+
+    const job = await VideoConvertingJob.query().insert({
+        queueJobId: jobId,
+        sourceFileId: file.id,
+        targetFileId: targetFile.id,
+        requesterId: userId,
+        status: VideoConvertingJob.STATUSES.PENDING,
+        params: {
+            convertingOptions,
+        },
+        requestedAt: new Date(),
+    })
+
+    return {
+        jobId: job.id,
+    }
 }
 
 

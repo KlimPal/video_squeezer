@@ -11,6 +11,8 @@ import { handleWsRpcConnection } from './lib/routers/handler_ws.js'
 import { handleHttpRpcRequest } from './lib/routers/handler_http.js'
 import { exportMetricsMiddleware } from './lib/use_cases/metrics.js'
 
+import { initWorkers } from './lib/services/workers/_index.js'
+
 
 const app = express()
 
@@ -46,6 +48,9 @@ app.use((err, req, res, _) => {
     console.error(err.stack)
     res.status(500).send('Something broke!')
 })
+
+
+initWorkers()
 
 
 const shutDownSignals = ['SIGINT', 'SIGTERM', 'SIGUSR2']

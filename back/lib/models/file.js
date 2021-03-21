@@ -23,6 +23,7 @@ class File extends BaseModel {
         PARTIAL_UPLOAD_STARTED: 'PARTIAL_UPLOAD_STARTED',
         PART_CONCATINATING: 'PART_CONCATINATING',
         UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
+        NOT_UPLOADED: 'NOT_UPLOADED',
     }
 
     async $afterDelete(queryContext) {

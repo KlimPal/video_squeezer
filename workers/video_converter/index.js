@@ -21,6 +21,7 @@ logger.info({
 
 }, 'Service is started')
 
+
 videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
     const rules = {
         sourceBucket: ['required', 'string'],
@@ -47,6 +48,11 @@ videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
         jobId: job.id,
         jobData: validData,
         progressCallback: progress,
+    })
+
+    await videoConvertingOutput.add({
+        parentJobId: job.id,
+        parentJobResult: result,
     })
 
     return result

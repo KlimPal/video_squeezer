@@ -41,7 +41,7 @@ async function convertVideo({
         const fileStat = await fs.stat(tmpSourcePath)
         logger.info({
             jobId,
-            action: 'DOWNLOAD_SOURCE_FILE',
+            stepName: 'DOWNLOAD_SOURCE_FILE',
             fileSize: fileStat.size,
             fileSizeAsString: cf.getFriendlyFileSize(fileStat.size),
             duration: Date.now() - downloadStartedAt,
@@ -50,7 +50,8 @@ async function convertVideo({
 
         const { crf, height, ffmpegPreset = 'veryfast' } = convertingOptions
 
-        const outputFilePath = path.join(config.tmpDirPath, `${cf.generateUniqueCode(24)}_converted.mp4`)
+        const outputFileName = `${cf.generateUniqueCode(24)}_converted.mp4`
+        const outputFilePath = path.join(config.tmpDirPath, outputFileName)
 
         filesToRemove.push(outputFilePath)
         const command = `ffmpeg -loglevel error -i "${tmpSourcePath}" `
@@ -68,7 +69,7 @@ async function convertVideo({
 
         logger.info({
             jobId,
-            action: 'CONVERT',
+            stepName: 'CONVERT',
             ffmpegCommand: command,
             outputFileSize: outputFileStat.size,
             outputFileSizeAsString: cf.getFriendlyFileSize(outputFileStat.size),
@@ -77,13 +78,14 @@ async function convertVideo({
 
         result.fileSize = outputFileStat.size
         result.fileSizeAsString = cf.getFriendlyFileSize(outputFileStat.size)
+        result.outputFileName = outputFileName
 
         const uploadStartedAt = Date.now()
         await minioClient.fPutObject(targetBucket, targetKey, outputFilePath)
 
         logger.info({
             jobId,
-            action: 'UPLOAD',
+            stepName: 'UPLOAD',
             duration: Date.now() - uploadStartedAt,
             outputFileSize: outputFileStat.size,
             outputFileSizeAsString: cf.getFriendlyFileSize(outputFileStat.size),

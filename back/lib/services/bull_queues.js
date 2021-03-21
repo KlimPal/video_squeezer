@@ -1,18 +1,30 @@
 import Queue from 'bull'
 import config from '../../config.js'
 
-const queueConfigs = config.bullQueues
 
+const configA = config.bullQueues.videoConvertingInput
+const configB = config.bullQueues.videoConvertingOutput
 
-const videoConverting = new Queue(queueConfigs.videoConverting.queueName, {
+const videoConvertingInput = new Queue(configA.queueName, {
     redis: {
-        host: queueConfigs.videoConverting.host,
-        port: queueConfigs.videoConverting.port,
-        password: queueConfigs.videoConverting.password,
-        tls: queueConfigs.videoConverting.tls,
+        host: configA.host,
+        port: configA.port,
+        password: configA.password,
+        tls: configA.tls,
     },
 })
 
+const videoConvertingOutput = new Queue(configB.queueName, {
+    redis: {
+        host: configB.host,
+        port: configB.port,
+        password: configB.password,
+        tls: configB.tls,
+    },
+})
+
+
 export {
-    videoConverting,
+    videoConvertingInput,
+    videoConvertingOutput,
 }
