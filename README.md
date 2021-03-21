@@ -13,7 +13,8 @@ npm start
 **Backend**:
 ```
 cd back/docker
-myIp=`sh local_ip.sh` docker-compose -p video_squeezer_dev -f compose-dev.yaml up --build
+sh gen_redis_certs.sh
+docker-compose -p video_squeezer_dev -f compose-dev.yaml up --build
 cd ../
 npm i
 npm start

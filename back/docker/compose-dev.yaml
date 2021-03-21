@@ -3,6 +3,7 @@ version: '3.7'
 volumes:
     minio_data: {}
     postgres_data: {}
+    redis_data: {}
 
 services:
   minio:
@@ -27,6 +28,23 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: "bitnami/redis:latest"
+    env_file:
+      - .env_redis
+    environment:
+      - REDIS_TLS_ENABLED=yes
+      - REDIS_TLS_AUTH_CLIENTS=no
+      - REDIS_TLS_CERT_FILE=/opt/bitnami/redis/certs/redis.crt
+      - REDIS_TLS_KEY_FILE=/opt/bitnami/redis/certs/redis.key
+      - REDIS_TLS_CA_FILE=/opt/bitnami/redis/certs/ca.crt
+      - REDIS_TLS_PORT=6379
+
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+      - './redis_certs:/opt/bitnami/redis/certs'
 
   adminer:
     image: adminer
