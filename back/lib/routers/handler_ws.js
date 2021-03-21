@@ -28,6 +28,7 @@ function handleWsRpcConnection(ws, req) {
         ws.on('message', async (msg = '') => {
             const traceId = cf.generateUniqueCode(16)
             const defaultLogData = { traceId, userId: context.userId }
+            const startRequestTime = Date.now()
 
             let endDurationMetric = customMetrics.sharedSocketRequestDuration.startTimer()
             try {
@@ -69,7 +70,10 @@ function handleWsRpcConnection(ws, req) {
                 ws.send(response)
 
                 cf.logger.debug({
-                    ...defaultLogData, data: result, type: 'API_RESPONSE',
+                    ...defaultLogData,
+                    data: result,
+                    type: 'API_RESPONSE',
+                    duration: Date.now() - startRequestTime,
                 }, 'API response')
             } catch (err) {
                 let data = { error: errorCodes.unknownError }
@@ -79,12 +83,18 @@ function handleWsRpcConnection(ws, req) {
                     data.details = err.details
 
                     cf.logger.debug({
-                        ...defaultLogData, data, type: 'API_RESPONSE',
+                        ...defaultLogData,
+                        data,
+                        type: 'API_RESPONSE',
+                        duration: Date.now() - startRequestTime,
                     }, 'API response (error)')
                 } else {
                     console.error(err)
                     cf.logger.error({
-                        ...defaultLogData, error: err, type: 'API_RESPONSE',
+                        ...defaultLogData,
+                        error: err,
+                        type: 'API_RESPONSE',
+                        duration: Date.now() - startRequestTime,
                     }, 'API response (unknown error)')
                 }
 

@@ -1,6 +1,6 @@
 import cf from '../utils/cf.js'
 import config from '../../config.js'
-import fileApi from '../services/fileApi.js'
+import fileApi from '../services/file_api.js'
 import { File, FilePart } from '../models/_index.js'
 import {
     emitError, errorCodes,

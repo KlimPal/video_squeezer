@@ -4,7 +4,7 @@ import livr from 'livr'
 import flatten from 'flat'
 import livrExtraRules from 'livr-extra-rules'
 
-import { logger } from './pinoLogger.js'
+import { logger } from './pino_logger.js'
 
 livr.Validator.defaultAutoTrim(true)
 livr.Validator.registerDefaultRules(livrExtraRules)
@@ -148,6 +148,19 @@ function pipeToFinish(...streams) {
     })
 }
 
+
+function getDurationInMs({
+    weeks = 0,
+    days = 0,
+    hours = 0,
+    minutes = 0,
+    seconds = 0,
+    milliseconds = 0,
+}) {
+    let result = ((((weeks * 7 + days) * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds
+    return result
+}
+
 export default {
     generateRandomCode,
     generateUniqueCode,
@@ -165,4 +178,5 @@ export default {
     fillTemplate,
     logger,
     pipeToFinish,
+    getDurationInMs,
 }

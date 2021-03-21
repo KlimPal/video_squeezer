@@ -58,10 +58,21 @@ const redis = {
     host: process.env.REDIS_HOST || '127.0.0.1',
     password: process.env.REDIS_PASSWORD || 'password',
     tls: {
-        rejectUnauthorized: false
-    }
+        rejectUnauthorized: false,
+    },
 }
 
+const bullQueues = {
+    videoConverting: {
+        queueName: 'video_converting',
+        host: redis.host,
+        port: redis.port,
+        password: redis.password,
+        tls: {
+            rejectUnauthorized: false,
+        },
+    },
+}
 
 export default {
     indexPath,
@@ -80,5 +91,5 @@ export default {
     imgproxyPublicBaseUrl,
     templateReplacementMap,
     pgConnection,
-    redis
+    bullQueues,
 }

@@ -27,8 +27,13 @@ async function isPasswordValid(hash, password) {
     return hash === computedHash
 }
 
+function sha256hex(text) {
+    return crypto.createHash('sha256').update(text).digest('hex')
+}
+
 
 export {
     getPasswordHash,
     isPasswordValid,
+    sha256hex,
 }

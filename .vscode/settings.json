@@ -8,10 +8,13 @@
         "postgresql"
     ],
     "cSpell.words": [
+        "Concatenator",
         "Postgis",
         "SRID",
         "dwithin",
-        "jsonb"
+        "jsonb",
+        "livr",
+        "minio"
     ],
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true

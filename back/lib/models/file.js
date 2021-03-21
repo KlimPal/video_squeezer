@@ -2,7 +2,7 @@ import objection from 'objection'
 import path from 'path'
 import fs from 'fs-extra'
 import { User, FilePart } from './_index.js'
-import { minioClient, defaultBucket } from '../services/fileApi.js'
+import { minioClient, defaultBucket } from '../services/file_api.js'
 import { BaseModel } from './base.js'
 import cf from '../utils/cf.js'
 import { concatFiles } from '../utils/files.js'
@@ -78,6 +78,11 @@ class File extends BaseModel {
 
     async getPresignedPutUrl(expiryInMs = 1000 * 60) {
         let url = await minioClient.presignedPutObject(this.bucket, this.objectName, expiryInMs / 1000)
+        url = url.replace(/[^/]*\/\/[^/]*\//, `${config.s3.publicBaseUrl}/`)
+        return url
+    }
+    async getPresignedGetUrl(expiryInMs = 1000 * 60) {
+        let url = await minioClient.presignedGetObject(this.bucket, this.objectName, expiryInMs / 1000)
         url = url.replace(/[^/]*\/\/[^/]*\//, `${config.s3.publicBaseUrl}/`)
         return url
     }

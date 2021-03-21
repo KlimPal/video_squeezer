@@ -11,7 +11,7 @@ module.exports = {
         },
     },
     rules: {
-        'no-unused-expressions': ["error", { "allowShortCircuit": true }],
+        'no-unused-expressions': ['error', { allowShortCircuit: true }],
         'lines-between-class-members': 'off',
         'import/extensions': ['error', 'always', { ignorePackages: true }],
         'import/no-named-as-default-member': 'off',
@@ -20,7 +20,6 @@ module.exports = {
         'prefer-const': 'off',
         'guard-for-in': 'off',
         'consistent-return': 'off',
-        eqeqeq: 'off',
         'no-restricted-syntax': 'off',
         'import/no-cycle': 'off',
         camelcase: 'off',
