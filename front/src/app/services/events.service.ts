@@ -8,9 +8,11 @@ import { eventsFromBackend } from '../utils/sharedSocket'
 export class EventsService {
 
     constructor() {
-        eventsFromBackend.subscribe(({event, data})=>{
-            if(!this.events[event]){
-                console.log('unhandled event from backend', {event, data});
+        eventsFromBackend.subscribe(({ event, data }) => {
+            console.log(event);
+
+            if (!this.events[event]) {
+                console.log('unhandled event from backend', { event, data });
                 return
             }
             this.events[event].emit(data)
@@ -18,6 +20,6 @@ export class EventsService {
     }
 
     events = {
-        map_update: new EventEmitter()
+        CONVERTED_FILE_READY_TO_DOWNLOAD: new EventEmitter(),
     }
 }

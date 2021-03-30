@@ -20,4 +20,4 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
         FooterMenuComponent
     ]
 })
-export class BaseModule {}
+export class BaseModule { }

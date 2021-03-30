@@ -1,18 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { sendWsMsg } from '../../utils/sharedSocket'
 import { msgUtils, http, cryptoUtils, cf } from '../../utils/cf'
 import _ from 'lodash'
+import { EventsService } from '../../services/events.service'
 
 @Component({
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
     styleUrls: ['./file-upload.component.css']
 })
-export class FileUploadComponent implements OnInit {
+export class FileUploadComponent implements OnInit, OnDestroy {
 
-    constructor() { }
+    constructor(eventsService: EventsService) {
+        const subscription = eventsService.events.CONVERTED_FILE_READY_TO_DOWNLOAD.subscribe(async data => {
+            console.log(data);
+            const text = `File ${data.convertedFile?.originalFileName} converted.`
+                + ` Size: ${cf.getFriendlyFileSize(+data.convertedFile?.size)}`
+                + `\nDownload now?`
+
+            let shouldDownloadFile = await msgUtils.confirm(text)
+            if (!shouldDownloadFile) {
+                return
+            }
+            const a = document.createElement("a");
+            a.href = data.linkToDownload
+            a.download = data.convertedFile?.originalFileName
+            a.click()
+        })
+        this.eventsSubscriptions.push(subscription)
+    }
 
     ngOnInit(): void { }
+
+    ngOnDestroy() {
+        this.eventsSubscriptions.forEach(subscription => {
+            subscription.unsubscribe()
+        })
+    }
+
+    eventsSubscriptions = []
     fileUploadingNow = false;
     uploadStatusText = ''
 
@@ -57,13 +83,20 @@ export class FileUploadComponent implements OnInit {
             fileId: this.fileInfo.id,
             compressOptions: this.compressOptions
         })
-        console.log(res);
 
         if (!res.result) {
             msgUtils.alert(res.error || 'error', { details: res.details })
         } else {
-            msgUtils.alert('done', { details: res.result })
+            msgUtils.success('Job created')
         }
+        this.isButtonCompressDisabled = true;
+        this.fileInfo = {
+            id: null,
+            name: null,
+            size: 0,
+            sizeAsString: ''
+        }
+
 
     }
 

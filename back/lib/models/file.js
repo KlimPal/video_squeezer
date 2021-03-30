@@ -88,8 +88,13 @@ class File extends BaseModel {
         url = url.replace(/[^/]*\/\/[^/]*\//, `${config.s3.publicBaseUrl}/`)
         return url
     }
-    async getPresignedGetUrl(expiryInMs = 1000 * 60) {
-        let url = await minioClient.presignedGetObject(this.bucket, this.objectName, expiryInMs / 1000)
+    async getPresignedGetUrl(expiryInMs = 1000 * 60, { responseContentDisposition } = {}) {
+        if (!responseContentDisposition) {
+            responseContentDisposition = `attachment; filename="${this.originalFileName}"`
+        }
+        let url = await minioClient.presignedGetObject(this.bucket, this.objectName, expiryInMs / 1000, {
+            'response-content-disposition': responseContentDisposition,
+        })
         url = url.replace(/[^/]*\/\/[^/]*\//, `${config.s3.publicBaseUrl}/`)
         return url
     }
@@ -135,5 +140,13 @@ class File extends BaseModel {
         return this
     }
 }
+
+async function test() {
+    const file = await File.query().findById('kmwh3oeh')
+    const link = await file.getPresignedGetUrl()
+    console.log(link)
+}
+
+test()
 
 export default File

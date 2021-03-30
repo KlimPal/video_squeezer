@@ -12,7 +12,7 @@ let eventsFromBackend = new EventEmitter()
 
 function initConection() {
     socket = new WebSocket(nodeWsRootAddress + '/api/sharedSocket');
-    socket.onopen = function() {
+    socket.onopen = function () {
         appState.connectionWithBackendStatus = 'ok';
         socketOnOpen.emit()
         socketClosed = false;
@@ -47,8 +47,10 @@ function initConection() {
         if (data.id && responseEmitters[data.id]) {
             responseEmitters[data.id].emit(data)
         }
-        if(data.event){
-            eventsFromBackend.emit({event: data.event, data: data.data})
+
+
+        if (data.event) {
+            eventsFromBackend.emit({ event: data.event, data: data.data })
         }
         appState.connectionWithBackendStatus = 'ok';
         socketClosed = false;
@@ -61,7 +63,7 @@ function initConection() {
 }
 initConection()
 
-async function sendWsMsg(method, data = null, connectionTimeout = 1000): Promise < any > {
+async function sendWsMsg(method, data = null, connectionTimeout = 1000): Promise<any> {
     if (socketClosed) {
         await new Promise((resolve) => {
             let subscription = socketOnOpen.subscribe(() => {
@@ -92,4 +94,4 @@ async function sendWsMsg(method, data = null, connectionTimeout = 1000): Promise
 
 
 
-export { sendWsMsg, socketOnOpen, eventsFromBackend}
+export { sendWsMsg, socketOnOpen, eventsFromBackend }

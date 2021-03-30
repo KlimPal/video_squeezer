@@ -56,7 +56,7 @@ function initVideoConvertingCompleter() {
                     jobId: convertingJob.id,
                     sourceFile,
                     convertedFile: targetFile,
-                    linkToDownload: targetFile.getPresignedGetUrl(cf.getDurationInMs({ days: 7 })),
+                    linkToDownload: await targetFile.getPresignedGetUrl(cf.getDurationInMs({ days: 7 })),
                 },
             })
 

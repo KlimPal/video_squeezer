@@ -39,7 +39,7 @@ services:
       - REDIS_TLS_KEY_FILE=/opt/bitnami/redis/certs/redis.key
       - REDIS_TLS_CA_FILE=/opt/bitnami/redis/certs/ca.crt
       - REDIS_TLS_PORT=6379
-
+    restart: unless-stopped
     ports:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
