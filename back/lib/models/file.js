@@ -141,12 +141,5 @@ class File extends BaseModel {
     }
 }
 
-async function test() {
-    const file = await File.query().findById('kmwh3oeh')
-    const link = await file.getPresignedGetUrl()
-    console.log(link)
-}
-
-test()
 
 export default File
