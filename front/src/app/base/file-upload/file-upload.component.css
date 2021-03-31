@@ -14,7 +14,7 @@
 .wrapper {
     background: rgba(255, 255, 255, 0);
     padding: 10px;
-    margin-top: 30vh;
+    margin-top: 20vh;
     padding-bottom:
 }
 .uploadStatus{
@@ -48,4 +48,8 @@
 
 .qqq.field>>>.mat-select-arrow{
     color: var(--gray400);
+}
+
+.selectedFile{
+    max-width: 200px;
 }
