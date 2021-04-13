@@ -19,7 +19,7 @@ services:
       - ./nginx_log:/var/log/nginx
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-      - ${WEB_APP_DIST:-../../public}:/var/www/video-squeezer-web-app
+      - ${BACKEND_PUBLIC:-../../backend_public}:/var/www/backend_public
       - ./auto_reload.sh:/docker-entrypoint.d/auto_reload.sh
     ulimits:
       nproc: 65535
