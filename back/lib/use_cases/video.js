@@ -17,6 +17,24 @@ import {
     videoConvertingInput,
 } from '../services/bull_queues.js'
 
+
+getOwnConvertingJobs.rules = {
+
+}
+
+async function getOwnConvertingJobs(validData, { context }) {
+    const { userId } = context
+    const jobs = await VideoConvertingJob.query().where({
+        requesterId: userId,
+    }).withGraphFetched('targetFile')
+
+    await Promise.all(jobs.map(async (job) => {
+        job.linkToDownload = await job.targetFile?.getPresignedGetUrl(cf.getDurationInMs({ hours: 6 }))
+    }))
+
+    return jobs
+}
+
 compress.rules = {
     fileId: ['required', 'string'],
     compressOptions: {
@@ -26,6 +44,7 @@ compress.rules = {
         },
     },
 }
+
 async function compress(validData, { context }) {
     const { userId } = context
     const file = await File.query().findById(validData.fileId)
@@ -82,4 +101,4 @@ async function compress(validData, { context }) {
 }
 
 
-export { compress }
+export { compress, getOwnConvertingJobs }

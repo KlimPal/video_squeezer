@@ -18,7 +18,7 @@ const methods = {
     'files.getOwnFiles': useCases.files.getOwnFiles,
 
     'video.compress': useCases.video.compress,
-
+    'video.getOwnConvertingJobs': useCases.video.getOwnConvertingJobs,
 
     getApiRules,
 }
@@ -26,10 +26,10 @@ const methods = {
 
 getApiRules.public = true
 function getApiRules() {
-    let doc = {
+    const doc = {
         ...methods,
     }
-    for (let key in doc) {
+    for (const key in doc) {
         doc[key] = doc[key].rules || null
     }
     return doc

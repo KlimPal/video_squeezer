@@ -4,6 +4,9 @@ import { msgUtils, http, cryptoUtils, cf } from '../../utils/cf'
 import _ from 'lodash'
 import { EventsService } from '../../services/events.service'
 
+import { Router } from '@angular/router';
+import { appState } from '../../globalConfig'
+
 @Component({
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
@@ -11,7 +14,10 @@ import { EventsService } from '../../services/events.service'
 })
 export class FileUploadComponent implements OnInit, OnDestroy {
 
-    constructor(eventsService: EventsService) {
+    constructor(
+        eventsService: EventsService,
+        private router: Router
+    ) {
         const subscription = eventsService.events.CONVERTED_FILE_READY_TO_DOWNLOAD.subscribe(async data => {
             console.log(data);
             const text = `File ${data.convertedFile?.originalFileName} converted.`
@@ -30,7 +36,10 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         this.eventsSubscriptions.push(subscription)
     }
 
-    ngOnInit(): void { }
+    ngOnInit(): void {
+
+        this.loadConvertingJobList()
+    }
 
     ngOnDestroy() {
         this.eventsSubscriptions.forEach(subscription => {
@@ -57,7 +66,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         { value: '20', label: 'High' },
         { value: '17', label: 'Very High' },
     ]
-
+    convertingJobs = []
 
     //_.range(17, 28).map(n => ({
     //     value: n,
@@ -96,8 +105,32 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             size: 0,
             sizeAsString: ''
         }
+    }
+
+    async loadConvertingJobList() {
+        let res = await sendWsMsg('video.getOwnConvertingJobs', {})
+        if (!res.result) {
+            msgUtils.alert(res.error || 'error', { details: res.details })
+            return
+        }
+        this.convertingJobs = res.result
+
+        console.log(res.result)
 
 
+    }
+    async logout() {
+        sendWsMsg('authentication.logout', { token: appState.user.token }).then((data) => {
+            //console.log(data);
+        })
+        appState.user = {
+            userId: '',
+            userName: '',
+            token: '',
+            sessionId: '',
+        }
+        localStorage.setItem('token', '')
+        this.router.navigateByUrl('/login')
     }
 
     async handleFileSelect(event) {

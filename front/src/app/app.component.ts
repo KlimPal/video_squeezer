@@ -21,10 +21,10 @@ export class AppComponent {
         }
 
         function initFocusStylingHelper() {
-            document.body.addEventListener('mousedown', function() {
+            document.body.addEventListener('mousedown', function () {
                 document.body.classList.add('using-mouse');
             });
-            document.body.addEventListener('keydown', function(event) {
+            document.body.addEventListener('keydown', function (event) {
                 if (event.keyCode === 9) {
                     document.body.classList.remove('using-mouse');
                 }
@@ -35,6 +35,20 @@ export class AppComponent {
         initFocusStylingHelper()
         window.addEventListener('resize', initCssVariableVh);
 
+    }
+
+    async logout() {
+        sendWsMsg('authentication.logout', { token: appState.user.token }).then((data) => {
+            //console.log(data);
+        })
+        appState.user = {
+            userId: '',
+            userName: '',
+            token: '',
+            sessionId: '',
+        }
+        localStorage.setItem('token', '')
+        this.router.navigateByUrl('/login')
     }
 
     ngOnInit() {

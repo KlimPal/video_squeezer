@@ -1,6 +1,13 @@
 <div class="qqq_theme">
+    <div class="headMenu" *ngIf="showFooterMenu">
+        <button class="qqq red t2 logout" (click)="logout()">
+            <mat-icon>keyboard_tab</mat-icon>
+            <span>Logout</span>
+        </button>
+    </div>
+
     <app-loading-type1 [isLoading]="false">
         <router-outlet></router-outlet>
     </app-loading-type1>
-    <app-footer-menu *ngIf="showFooterMenu"></app-footer-menu>
+    <!-- <app-footer-menu *ngIf="showFooterMenu"></app-footer-menu> -->
 </div>
