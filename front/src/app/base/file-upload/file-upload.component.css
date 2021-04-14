@@ -53,3 +53,8 @@
 .selectedFile{
     max-width: 200px;
 }
+
+
+table.convertingJobs{
+    margin-top: 50px;
+}

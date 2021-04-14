@@ -56,6 +56,28 @@
     </button>
 
 
+    <table class="qqq convertingJobs">
+        <thead>
+            <td>Created at</td>
+            <td>File</td>
+            <td>Size</td>
+        </thead>
+        <tr *ngFor="let job of convertingJobs">
+            <td>{{job.requestedAtAsString}}</td>
+            <td>{{job.fileName}}</td>
+            <td>{{job.fileSizeAsString}}</td>
+            <td>
+                <a *ngIf="job.status === 'COMPLETED'" class="qqq" [href]="job.linkToDownload"
+                    [download]="job.targetFile?.originalFileName">
+                    Download
+                </a>
+                <span *ngIf="job.status !== 'COMPLETED'">
+                    {{job.status}}
+                </span>
+            </td>
+        </tr>
+    </table>
+
 
 
 </div>

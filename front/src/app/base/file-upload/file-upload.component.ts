@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { sendWsMsg } from '../../utils/sharedSocket'
-import { msgUtils, http, cryptoUtils, cf } from '../../utils/cf'
+import { msgUtils, http, cryptoUtils, cf, dateUtils } from '../../utils/cf'
 import _ from 'lodash'
 import { EventsService } from '../../services/events.service'
-
+import { formatDate } from '@angular/common';
 import { Router } from '@angular/router';
 import { appState } from '../../globalConfig'
 
@@ -113,8 +113,17 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             msgUtils.alert(res.error || 'error', { details: res.details })
             return
         }
-        this.convertingJobs = res.result
 
+        for (let job of res.result) {
+            job.requestedAtAsString = formatDate(job.requestedAt, 'd MMM HH:mm', 'en-US')
+            if (job.status === 'COMPLETED') {
+                job.fileSizeAsString = cf.getFriendlyFileSize(job.targetFile?.size)
+                job.linkToDownload = job.linkToDownload
+            }
+            job.fileName = job.targetFile?.originalFileName
+        }
+
+        this.convertingJobs = res.result
         console.log(res.result)
 
 
