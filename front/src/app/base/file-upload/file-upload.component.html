@@ -57,21 +57,46 @@
 
 
     <table class="qqq convertingJobs">
-        <thead>
-            <td>Created at</td>
+        <!-- <tr>
             <td>File</td>
             <td>Size</td>
-        </thead>
+            <td></td>
+        </tr> -->
         <tr *ngFor="let job of convertingJobs">
-            <td>{{job.requestedAtAsString}}</td>
-            <td>{{job.fileName}}</td>
-            <td>{{job.fileSizeAsString}}</td>
             <td>
-                <a *ngIf="job.status === 'COMPLETED'" class="qqq" [href]="job.linkToDownload"
-                    [download]="job.targetFile?.originalFileName">
-                    Download
-                </a>
-                <span *ngIf="job.status !== 'COMPLETED'">
+                {{job.requestedAtAsString}}
+                <br>
+                {{job.fileName}}
+            </td>
+            <td>
+                {{job.compressOptionsAstString}}
+                <br>
+                {{job.sourceFile?.sizeAsString}}→{{job.targetFile?.sizeAsString}}
+
+                <span *ngIf="job.status === 'COMPLETED'">
+                    <br>
+                    Duration: {{job.durationAsString}}
+                </span>
+
+            </td>
+            <td>
+                <ng-container *ngIf="job.status === 'COMPLETED'">
+                    <a class="qqq" [href]="job.linkToDownload" [download]="job.targetFile?.originalFileName">
+                        <button class="qqq t4 green">
+                            <mat-icon>
+                                get_app
+                            </mat-icon>
+                        </button>
+                    </a>
+                    <button class="qqq t3 gray marginLeft5" (click)="removeJob(job)">
+                        <mat-icon>
+                            close
+                        </mat-icon>
+                    </button>
+                </ng-container>
+
+
+                <span *ngIf=" job.status !=='COMPLETED'">
                     {{job.status}}
                 </span>
             </td>

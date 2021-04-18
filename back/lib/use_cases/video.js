@@ -26,13 +26,27 @@ async function getOwnConvertingJobs(validData, { context }) {
     const { userId } = context
     const jobs = await VideoConvertingJob.query().where({
         requesterId: userId,
-    }).withGraphFetched('targetFile')
+    }).orderBy('requestedAt', 'desc').withGraphFetched('[targetFile,sourceFile]')
 
     await Promise.all(jobs.map(async (job) => {
         job.linkToDownload = await job.targetFile?.getPresignedGetUrl(cf.getDurationInMs({ hours: 6 }))
     }))
 
     return jobs
+}
+
+removeConvertingJob.rules = {
+    jobId: ['required', 'string'],
+}
+async function removeConvertingJob(validData, { context }) {
+    const { userId } = context
+    const job = await VideoConvertingJob.query().findOne({
+        id: validData.jobId,
+        requesterId: userId,
+    })
+    !job && emitError(errorCodes.notFound)
+    await job.$query().delete()
+    return 'ok'
 }
 
 compress.rules = {
@@ -101,4 +115,8 @@ async function compress(validData, { context }) {
 }
 
 
-export { compress, getOwnConvertingJobs }
+export {
+    compress,
+    getOwnConvertingJobs,
+    removeConvertingJob,
+}

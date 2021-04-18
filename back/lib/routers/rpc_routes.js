@@ -19,6 +19,7 @@ const methods = {
 
     'video.compress': useCases.video.compress,
     'video.getOwnConvertingJobs': useCases.video.getOwnConvertingJobs,
+    'video.removeConvertingJob': useCases.video.removeConvertingJob,
 
     getApiRules,
 }

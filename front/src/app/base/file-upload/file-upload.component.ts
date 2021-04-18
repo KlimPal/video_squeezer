@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { sendWsMsg } from '../../utils/sharedSocket'
 import { msgUtils, http, cryptoUtils, cf, dateUtils } from '../../utils/cf'
 import _ from 'lodash'
@@ -16,9 +16,14 @@ export class FileUploadComponent implements OnInit, OnDestroy {
 
     constructor(
         eventsService: EventsService,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) {
         const subscription = eventsService.events.CONVERTED_FILE_READY_TO_DOWNLOAD.subscribe(async data => {
+            await this.loadConvertingJobList()
+            msgUtils.success('Job completed')
+            cdr.detectChanges()
+            return
             console.log(data);
             const text = `File ${data.convertedFile?.originalFileName} converted.`
                 + ` Size: ${cf.getFriendlyFileSize(+data.convertedFile?.size)}`
@@ -97,6 +102,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             msgUtils.alert(res.error || 'error', { details: res.details })
         } else {
             msgUtils.success('Job created')
+            await this.loadConvertingJobList()
         }
         this.isButtonCompressDisabled = true;
         this.fileInfo = {
@@ -105,6 +111,25 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             size: 0,
             sizeAsString: ''
         }
+    }
+
+    getCompressOptionAsString({ crf, height }) {
+        const sizeLabel = this.videoSizeOptions.find(el => el.value === '' + height)?.label
+        return `CRF ${crf}, ${sizeLabel}`
+    }
+
+    async removeJob(job) {
+        let res = await sendWsMsg('video.removeConvertingJob', {
+            jobId: job.id
+        })
+        if (!res.result) {
+            msgUtils.alert(res.error || 'error', { details: res.details })
+            return
+        }
+
+        this.convertingJobs = this.convertingJobs.filter(el => el.id !== job.id)
+        this.cdr.detectChanges()
+        msgUtils.log('Job removed')
     }
 
     async loadConvertingJobList() {
@@ -116,17 +141,24 @@ export class FileUploadComponent implements OnInit, OnDestroy {
 
         for (let job of res.result) {
             job.requestedAtAsString = formatDate(job.requestedAt, 'd MMM HH:mm', 'en-US')
+
             if (job.status === 'COMPLETED') {
-                job.fileSizeAsString = cf.getFriendlyFileSize(job.targetFile?.size)
-                job.linkToDownload = job.linkToDownload
+                job.targetFile.sizeAsString = cf.getFriendlyFileSize(job.targetFile?.size)
+                job.durationAsString = dateUtils.msToStringDelay(Date.parse(job.completedAt) - Date.parse(job.requestedAt))
+            } else {
+                job.targetFile.sizeAsString = '???'
             }
-            job.fileName = job.targetFile?.originalFileName
+
+
+
+            job.sourceFile.sizeAsString = cf.getFriendlyFileSize(job.sourceFile?.size)
+            const { crf, height } = job.params?.convertingOptions
+            job.compressOptionsAstString = this.getCompressOptionAsString({ crf, height })
+            job.fileName = job.sourceFile?.originalFileName
         }
 
         this.convertingJobs = res.result
         console.log(res.result)
-
-
     }
     async logout() {
         sendWsMsg('authentication.logout', { token: appState.user.token }).then((data) => {

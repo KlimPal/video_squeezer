@@ -3,6 +3,7 @@ WORKDIR /usr/src/app
 RUN apt-get update -y
 RUN apt-get install -y ffmpeg
 COPY package*.json ./
+RUN npm i -g npm
 RUN npm install --only=prod
 COPY . .
 ENTRYPOINT [ "node", "index.js" ]
