@@ -62,7 +62,7 @@
             <td>Size</td>
             <td></td>
         </tr> -->
-        <tr *ngFor="let job of convertingJobs">
+        <tr *ngFor="let job of convertingJobs" [@removeJob]="job.isRemoving ? 'removing' : 'default'">
             <td>
                 {{job.requestedAtAsString}}
                 <br>

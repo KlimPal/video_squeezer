@@ -20,8 +20,14 @@
     position: relative;
     padding-bottom: 50px;
     text-align: left;
-    min-width: 320px
+    min-width:  320px
 }
+@media screen and (min-width: 600px){
+    .wrapper{
+        min-width:  360px
+    }
+}
+
 .uploadStatus{
     color: var(--gray400);
 }
@@ -73,6 +79,9 @@ table.convertingJobs  td:nth-child(1){
 }
 table.convertingJobs  td:not(:last-child){
     border-right: dashed 1px var(--gray600);
+}
+table.convertingJobs  tr:not(:last-child){
+    border-bottom: dashed 1px var(--gray600);
 }
 
 table.convertingJobs  td:last-child{

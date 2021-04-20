@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, HostBinding } from '@angular/core';
 import { sendWsMsg } from '../../utils/sharedSocket'
 import { msgUtils, http, cryptoUtils, cf, dateUtils } from '../../utils/cf'
 import _ from 'lodash'
@@ -7,10 +7,41 @@ import { formatDate } from '@angular/common';
 import { Router } from '@angular/router';
 import { appState } from '../../globalConfig'
 
+
+import {
+    trigger,
+    state,
+    style,
+    animate,
+    transition,
+
+} from '@angular/animations';
+
 @Component({
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
-    styleUrls: ['./file-upload.component.css']
+    styleUrls: ['./file-upload.component.css'],
+    animations: [
+        trigger('removeJob', [
+            // ...
+            state('removing', style({
+                opacity: 0,
+                transform: 'translateX(-500px)',
+                display: 'none'
+            })),
+            state('default', style({
+                opacity: 1,
+                transform: 'translateX(0px)',
+                //display: 'block'
+            })),
+            transition('default => removing', [
+                animate('0.1s ease-in-out')
+            ]),
+            // transition('removing => default', [
+            //     animate('0.5s')
+            // ]),
+        ]),
+    ],
 })
 export class FileUploadComponent implements OnInit, OnDestroy {
 
@@ -105,6 +136,11 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     }
 
     async removeJob(job) {
+        job.isRemoving = true;
+        setTimeout(() => {
+            this.convertingJobs = this.convertingJobs.filter(el => el.id !== job.id)
+        }, 300)
+
         let res = await sendWsMsg('video.removeConvertingJob', {
             jobId: job.id
         })
@@ -113,7 +149,6 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             return
         }
 
-        this.convertingJobs = this.convertingJobs.filter(el => el.id !== job.id)
         this.cdr.detectChanges()
         msgUtils.log('Job removed')
     }
