@@ -19,24 +19,10 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         private router: Router,
         private cdr: ChangeDetectorRef
     ) {
-        const subscription = eventsService.events.CONVERTED_FILE_READY_TO_DOWNLOAD.subscribe(async data => {
+        const subscription = eventsService.events.CONVERTING_JOB_STATUS_CHANGED.subscribe(async data => {
             await this.loadConvertingJobList()
             msgUtils.success('Job completed')
             cdr.detectChanges()
-            return
-            console.log(data);
-            const text = `File ${data.convertedFile?.originalFileName} converted.`
-                + ` Size: ${cf.getFriendlyFileSize(+data.convertedFile?.size)}`
-                + `\nDownload now?`
-
-            let shouldDownloadFile = await msgUtils.confirm(text)
-            if (!shouldDownloadFile) {
-                return
-            }
-            const a = document.createElement("a");
-            a.href = data.linkToDownload
-            a.download = data.convertedFile?.originalFileName
-            a.click()
         })
         this.eventsSubscriptions.push(subscription)
     }
@@ -146,9 +132,11 @@ export class FileUploadComponent implements OnInit, OnDestroy {
                 job.targetFile.sizeAsString = cf.getFriendlyFileSize(job.targetFile?.size)
                 job.durationAsString = dateUtils.msToStringDelay(Date.parse(job.completedAt) - Date.parse(job.requestedAt))
             } else {
-                job.targetFile.sizeAsString = '???'
-            }
+                if (job.targetFile) {
+                    job.targetFile.sizeAsString = '???'
+                }
 
+            }
 
 
             job.sourceFile.sizeAsString = cf.getFriendlyFileSize(job.sourceFile?.size)

@@ -20,6 +20,6 @@ export class EventsService {
     }
 
     events = {
-        CONVERTED_FILE_READY_TO_DOWNLOAD: new EventEmitter(),
+        CONVERTING_JOB_STATUS_CHANGED: new EventEmitter(),
     }
 }

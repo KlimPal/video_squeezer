@@ -45,11 +45,20 @@ videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
     }, 'Job received')
 
     const progress = percentage => job.progress(percentage)
-    const result = await convertVideo({
-        jobId: job.id,
-        jobData: validData,
-        progressCallback: progress,
-    })
+    let result
+    try {
+        result = await convertVideo({
+            jobId: job.id,
+            jobData: validData,
+            progressCallback: progress,
+        })
+    } catch (error) {
+        await videoConvertingOutput.add({
+            parentJobId: job.id,
+            parentJobError: error.toString(),
+        })
+        return
+    }
 
     await videoConvertingOutput.add({
         parentJobId: job.id,

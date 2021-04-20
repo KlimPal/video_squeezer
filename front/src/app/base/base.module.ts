@@ -8,13 +8,17 @@ import { AuthenticationComponent } from './authentication/authentication.compone
 import { ProfileComponent } from './profile/profile.component';
 import { TelegramComponent } from './authentication/telegram/telegram.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [FooterMenuComponent, AuthenticationComponent, ProfileComponent, TelegramComponent, FileUploadComponent],
     imports: [
         CommonModule,
         UiModule,
-        RouterModule
+        RouterModule,
+        BrowserModule,
+        BrowserAnimationsModule
     ],
     exports: [
         FooterMenuComponent

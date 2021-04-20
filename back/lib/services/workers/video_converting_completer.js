@@ -16,6 +16,8 @@ function initVideoConvertingCompleter() {
         try {
             const parentJobId = job.data?.parentJobId
             const parentJobResult = job.data?.parentJobResult
+            const parentJobError = job.data?.parentJobError
+
 
             logger.info({
                 jobId: job.id,
@@ -23,9 +25,29 @@ function initVideoConvertingCompleter() {
                 jobData: job.data,
             }, 'Job received')
 
+
             const convertingJob = await VideoConvertingJob.query().findOne({
                 queueJobId: parentJobId,
             })
+
+            if (parentJobError) {
+                await convertingJob.$query().updateAndFetch({
+                    status: VideoConvertingJob.STATUSES.FAILED,
+                    failedAt: new Date(),
+                })
+                logger.info({
+                    jobId: job.id,
+                    jobType,
+                    duration: Date.now() - jobStartedAt,
+                    parentJobError,
+                }, 'Job completed (error)')
+                await sendEvent({
+                    userIdList: [convertingJob.requesterId],
+                    eventName: 'CONVERTING_JOB_STATUS_CHANGED',
+                    data: { },
+                })
+                return
+            }
             const targetFile = await File.query().findById(convertingJob.targetFileId)
             const sourceFile = await File.query().findById(convertingJob.sourceFileId)
 
@@ -51,13 +73,8 @@ function initVideoConvertingCompleter() {
 
             await sendEvent({
                 userIdList: [convertingJob.requesterId],
-                eventName: 'CONVERTED_FILE_READY_TO_DOWNLOAD',
-                data: {
-                    jobId: convertingJob.id,
-                    sourceFile,
-                    convertedFile: targetFile,
-                    linkToDownload: await targetFile.getPresignedGetUrl(cf.getDurationInMs({ days: 7 })),
-                },
+                eventName: 'CONVERTING_JOB_STATUS_CHANGED',
+                data: { },
             })
 
             logger.info({
@@ -66,6 +83,8 @@ function initVideoConvertingCompleter() {
                 duration: Date.now() - jobStartedAt,
             }, 'Job completed')
         } catch (error) {
+            console.log(error)
+
             logger.error({
                 jobId: job.id,
                 jobType,

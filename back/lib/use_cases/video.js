@@ -43,9 +43,13 @@ async function removeConvertingJob(validData, { context }) {
     const job = await VideoConvertingJob.query().findOne({
         id: validData.jobId,
         requesterId: userId,
-    })
+    }).withGraphFetched('[targetFile,sourceFile]')
     !job && emitError(errorCodes.notFound)
+
     await job.$query().delete()
+    await job.targetFile?.$query().delete()
+    await job.sourceFile?.$query().delete()
+
     return 'ok'
 }
 
@@ -82,6 +86,18 @@ async function compress(validData, { context }) {
         height: validData.compressOptions.size,
         crf: validData.compressOptions.crf,
     }
+    const job = await VideoConvertingJob.query().insert({
+        queueJobId: jobId,
+        sourceFileId: file.id,
+        targetFileId: targetFile.id,
+        requesterId: userId,
+        status: VideoConvertingJob.STATUSES.PENDING,
+        params: {
+            convertingOptions,
+        },
+        requestedAt: new Date(),
+    })
+
     await videoConvertingInput.add({
         sourceBucket: file.bucket,
         sourceKey: file.objectName,
@@ -96,18 +112,6 @@ async function compress(validData, { context }) {
         // removeOnFail: true,
     })
 
-
-    const job = await VideoConvertingJob.query().insert({
-        queueJobId: jobId,
-        sourceFileId: file.id,
-        targetFileId: targetFile.id,
-        requesterId: userId,
-        status: VideoConvertingJob.STATUSES.PENDING,
-        params: {
-            convertingOptions,
-        },
-        requestedAt: new Date(),
-    })
 
     return {
         jobId: job.id,

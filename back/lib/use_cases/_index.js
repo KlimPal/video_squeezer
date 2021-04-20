@@ -10,5 +10,5 @@ export {
     user,
     metrics,
     files,
-    video
+    video,
 }

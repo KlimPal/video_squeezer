@@ -88,6 +88,15 @@
                             </mat-icon>
                         </button>
                     </a>
+                    <button class="qqq t3 gray marginLeft20" (click)="removeJob(job)">
+                        <mat-icon>
+                            close
+                        </mat-icon>
+                    </button>
+                </ng-container>
+
+                <ng-container *ngIf="job.status === 'FAILED'">
+                    {{job.status}}
                     <button class="qqq t3 gray marginLeft5" (click)="removeJob(job)">
                         <mat-icon>
                             close
@@ -95,9 +104,8 @@
                     </button>
                 </ng-container>
 
-
-                <span *ngIf=" job.status !=='COMPLETED'">
-                    {{job.status}}
+                <span *ngIf="job.status === 'PENDING'">
+                    <mat-spinner diameter="20"></mat-spinner>
                 </span>
             </td>
         </tr>

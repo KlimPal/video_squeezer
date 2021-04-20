@@ -71,3 +71,14 @@ table.convertingJobs  td:nth-child(1){
     max-width: 120px;
     white-space: pre-line;
 }
+table.convertingJobs  td:not(:last-child){
+    border-right: dashed 1px var(--gray600);
+}
+
+table.convertingJobs  td:last-child{
+    padding-left: 15px;
+}
+
+:host >>> .mat-spinner  circle{
+    stroke: var(--green400) !important;
+}
