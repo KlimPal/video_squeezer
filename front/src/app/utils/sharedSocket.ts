@@ -67,11 +67,11 @@ async function sendWsMsg(method, data = null, connectionTimeout = 1000): Promise
     if (socketClosed) {
         await new Promise((resolve) => {
             let subscription = socketOnOpen.subscribe(() => {
-                resolve()
+                resolve(null)
             })
             setTimeout(() => {
                 subscription.unsubscribe()
-                resolve()
+                resolve(null)
             }, connectionTimeout)
 
         })

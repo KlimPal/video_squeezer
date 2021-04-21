@@ -271,7 +271,7 @@ export let cf = {
     sleep: (timeout) => {
         return new Promise(resolve => {
             setTimeout(() => {
-                resolve()
+                resolve(null)
             }, timeout)
         })
     },
