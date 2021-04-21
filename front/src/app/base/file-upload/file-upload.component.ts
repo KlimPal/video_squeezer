@@ -26,7 +26,7 @@ import {
             // ...
             state('removing', style({
                 opacity: 0,
-                transform: 'translateX(-500px)',
+                transform: 'translateX(-200px)',
                 display: 'none'
             })),
             state('default', style({
