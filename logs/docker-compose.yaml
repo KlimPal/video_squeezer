@@ -42,6 +42,7 @@ services:
     ports:
       # Graylog web interface and REST API
       - 9001:9000
+      - 5555:5555
       # Syslog TCP
       - 1514:1514
       # Syslog UDP
