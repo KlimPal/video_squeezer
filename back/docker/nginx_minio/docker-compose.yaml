@@ -1,0 +1,56 @@
+
+version: '3.7'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - ${NGINX_HTTP_PORT}:80
+      - ${NGINX_HTTPS_PORT}:443/tcp
+    environment:
+      - NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/templates
+      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=.template
+      - HOST_MINIO=minio:9000
+    volumes:
+      - ./nginx_conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx_conf/common:/etc/nginx/conf.d/common:ro
+      - ./nginx_conf/templates:/etc/nginx/templates:ro
+      - ./nginx_log:/var/log/nginx
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./auto_reload.sh:/docker-entrypoint.d/auto_reload.sh
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 110000
+        hard: 150000
+    restart: unless-stopped
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    env_file:
+      - .env_certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  minio:
+    image: minio/minio
+    command: server /data
+    volumes:
+      - minio_data:/data
+    env_file:
+        - .env_minio
+    restart: unless-stopped
+
+    
+
+
+
+
+
+
+
+
+
+
