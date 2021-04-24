@@ -1,6 +1,5 @@
 #!/bin/bash
-
-# This is a modified script from https://github.com/wmnnd/nginx-certbot
+set -e
 
 if ! [ -x "$(command -v docker-compose)" ]; then
   echo 'Error: docker-compose is not installed.' >&2
@@ -53,11 +52,11 @@ echo
 
 
 echo "### Starting nginx ..."
-myIp=$myIp NGINX_HTTP_PORT=$NGINX_HTTP_PORT NGINX_HTTPS_PORT=$NGINX_HTTPS_PORT docker-compose up --force-recreate -d nginx
+NGINX_HTTPS_PORT=$NGINX_HTTPS_PORT docker-compose up --force-recreate -d nginx
 echo
 
 echo "### Deleting dummy certificate for $domains ..."
-myIp=$myIp NGINX_HTTP_PORT=$NGINX_HTTP_PORT NGINX_HTTPS_PORT=$NGINX_HTTPS_PORT docker-compose run --rm --entrypoint "\
+NGINX_HTTPS_PORT=$NGINX_HTTPS_PORT docker-compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/domain && \
   rm -Rf /etc/letsencrypt/archive/domain && \
   rm -Rf /etc/letsencrypt/renewal/domain.conf" certbot
@@ -81,7 +80,7 @@ esac
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
 
 docker-compose run --rm --entrypoint "\
-  certbot certonly --webroot -w /var/www/certbot \
+  certbot certonly --dns-route53 \
     $staging_arg \
     $email_arg \
     $domain_args \

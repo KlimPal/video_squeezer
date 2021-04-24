@@ -8,8 +8,8 @@ back/utils/.DS_Store
 back/.DS_Store
 
 .DS_Store
-back/docker/nginx/nginx_log
-back/docker/nginx/certbot
+**/nginx_log
+**/certbot
 back/docker/monitoring/grafana/grafana.db
 
 .env
@@ -30,3 +30,5 @@ workers/video_converter/logs/*
 !workers/video_converter/logs/.gitkeep
 workers/video_converter/tmp/*
 !workers/video_converter/tmp/.gitkeep
+
+
