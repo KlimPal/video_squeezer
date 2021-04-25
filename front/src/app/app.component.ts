@@ -49,7 +49,7 @@ export class AppComponent {
 
         setInterval(() => {
             this.swUpdate.checkForUpdate();
-        }, 21600);
+        }, 30000);
 
     }
 
