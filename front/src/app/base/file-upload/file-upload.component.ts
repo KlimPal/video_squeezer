@@ -177,7 +177,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
                 }
 
             }
-
+            job.sourceFile = job.sourceFile || {}
 
             job.sourceFile.sizeAsString = cf.getFriendlyFileSize(job.sourceFile?.size)
             const { crf, height } = job.params?.convertingOptions

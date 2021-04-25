@@ -134,10 +134,11 @@ async function getPartialUpload(data, { context }) {
         minioServerId = minioServer.id
     }
 
+    const targetObjectName = `users/${context.userId}/${cf.generateUniqueCode()}`
     const file = await File.query().insert({
         id: cf.generateUniqueCode(),
         bucket: File.defaultBucket,
-        objectName: cf.generateUniqueCode(24),
+        objectName: targetObjectName,
         authorId: context.userId,
         hash: data.fileHash,
         status: File.STATUSES.PARTIAL_UPLOAD_STARTED,
@@ -153,7 +154,7 @@ async function getPartialUpload(data, { context }) {
         fileId: file.id,
         rangeStart: partIndex * partSize,
         rangeEnd: (partIndex + 1) * partSize,
-        objectName: `${file.objectName}_parts/${cf.generateUniqueCode(24)}`,
+        objectName: `${file.objectName}_parts/${partIndex}`,
         status: FilePart.STATUSES.CREATED,
         minioServerId,
     }))

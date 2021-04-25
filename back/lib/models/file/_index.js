@@ -2,11 +2,12 @@ import objection from 'objection'
 import path from 'path'
 import fs from 'fs-extra'
 import minio from 'minio'
-import { User, FilePart, MinioServer } from './_index.js'
-import { BaseModel } from './base.js'
-import cf from '../utils/cf.js'
-import { concatFiles } from '../utils/files.js'
-import config from '../../config.js'
+import { User, FilePart, MinioServer } from '../_index.js'
+import { BaseModel } from '../base.js'
+import cf from '../../utils/cf.js'
+import { concatFiles } from '../../utils/files.js'
+import config from '../../../config.js'
+import { concatObjects, getS3Client } from './utils.js'
 
 const defaultBucket = 'default'
 
@@ -38,7 +39,6 @@ async function getMinioClientByConfig({
     minioClientMap[clientId] = client
     return client
 }
-
 
 async function prepareMinioInstance(minioClient) {
     const defaultRegion = 'us-east-1'
@@ -203,23 +203,30 @@ class File extends BaseModel {
             fileId: this.id,
         })).sort((a, b) => a.rangeStart - b.rangeStart)
 
-        const tmpDir = path.join(config.indexPath, 'tmp')
-        const targetPath = path.join(tmpDir, this.id)
-        const sourceList = []
-        await Promise.all(allParts.map(async (part) => {
-            const partLocalPath = path.join(tmpDir, part.id)
-            sourceList.push(partLocalPath)
-            await cf.pipeToFinish(await part.getStream(), fs.createWriteStream(partLocalPath))
-        }))
-        await concatFiles(sourceList, targetPath)
+        const minioServer = await MinioServer.query().findById(this.minioServerId)
+
+        const s3Client = getS3Client({
+            host: minioServer.host,
+            port: minioServer.port,
+            accessKey: minioServer.accessKey,
+            secretKey: minioServer.secretKey,
+        })
+
+        await concatObjects({
+            sourceObjects: allParts.map((el) => ({ bucket: el.bucket, objectName: el.objectName })),
+            targetBucket: this.bucket,
+            targetObjectName: this.objectName,
+            s3Client,
+        })
+
         const minioClient = await this.getMinioClient()
-        await minioClient.fPutObject(this.bucket, this.objectName, targetPath)
         const stat = await minioClient.statObject(this.bucket, this.objectName)
-        await Promise.all([...sourceList, targetPath].map((el) => fs.remove(el)))
         await this.$query().patchAndFetch({
             status: File.STATUSES.UPLOAD_COMPLETED,
             size: stat.size,
         })
+
+
         await Promise.all(allParts.map((part) => part.$query().delete()))
 
         return this
