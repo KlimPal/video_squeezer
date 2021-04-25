@@ -3,10 +3,10 @@ import { MinioServer } from '../models/_index.js'
 
 const program = new Command()
 program
-    .option('-p, --port <port>', 'PORT', Number.parseInt)
-    .option('-h, --host <host>', 'HOST')
-    .option('-a, --access-key <accessKey>', 'ACCESS_KEY')
-    .option('-s, --secret-key <secretKey>', 'SECRET_KEY')
+    .requiredOption('-p, --port <port>', 'PORT', Number.parseInt)
+    .requiredOption('-h, --host <host>', 'HOST')
+    .requiredOption('-a, --access-key <accessKey>', 'ACCESS_KEY')
+    .requiredOption('-s, --secret-key <secretKey>', 'SECRET_KEY')
 
 program.parse(process.argv)
 
