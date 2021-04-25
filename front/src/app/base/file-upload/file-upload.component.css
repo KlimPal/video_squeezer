@@ -22,9 +22,10 @@
     text-align: left;
     min-width:  320px
 }
-@media screen and (min-width: 600px){
+@media screen and (max-width: 600px){
     .wrapper{
-        min-width:  360px
+        min-width:  100vw;
+        padding-left: 20px;
     }
 }
 
