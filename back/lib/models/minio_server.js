@@ -38,7 +38,6 @@ class MinioServer extends BaseModel {
             accessKey,
             encryptedSecretKey,
         })
-        console.log(minioServer.secretKey)
 
         return minioServer
     }
