@@ -10,6 +10,7 @@ import {
     User,
     File,
     VideoConvertingJob,
+    MinioServer,
 } from '../models/_index.js'
 import { sha256hex } from '../utils/crypto.js'
 
@@ -80,6 +81,7 @@ async function compress(validData, { context }) {
         objectName: targetKey,
         authorId: userId,
         status: File.STATUSES.NOT_UPLOADED,
+        minioServerId: file.minioServerId,
     })
 
     const convertingOptions = {
@@ -98,7 +100,10 @@ async function compress(validData, { context }) {
         requestedAt: new Date(),
     })
 
+    const minioServer = await MinioServer.query().findById(file.minioServerId)
+
     await videoConvertingInput.add({
+        minioServer,
         sourceBucket: file.bucket,
         sourceKey: file.objectName,
         targetBucket: file.bucket,

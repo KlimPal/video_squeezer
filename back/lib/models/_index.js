@@ -5,6 +5,7 @@ import File from './file.js'
 import Document from './document.js'
 import FilePart from './file_part.js'
 import VideoConvertingJob from './video_converting_job.js'
+import MinioServer from './minio_server.js'
 
 const { Model } = objection
 
@@ -16,4 +17,5 @@ export {
     Document,
     FilePart,
     VideoConvertingJob,
+    MinioServer,
 }

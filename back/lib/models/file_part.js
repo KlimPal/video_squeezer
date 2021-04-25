@@ -1,6 +1,5 @@
 import objection from 'objection'
-import { User, File } from './_index.js'
-import { minioClient, defaultBucket } from '../services/file_api.js'
+import { User, File, MinioServer } from './_index.js'
 import { BaseModel } from './base.js'
 import cf from '../utils/cf.js'
 import config from '../../config.js'
@@ -16,14 +15,19 @@ class FilePart extends BaseModel {
     createdAt
     updatedAt
     status
+    minioServerId
 
     static STATUSES = {
         CREATED: 'CREATED',
         UPLOADED: 'UPLOADED',
     }
 
+    getMinioClient() {
+        return File.getMinioClientById(this.minioServerId)
+    }
     async $afterDelete(queryContext) {
         await super.$afterDelete(queryContext)
+        const minioClient = await this.getMinioClient()
         await minioClient.removeObject(this.bucket, this.objectName)
     }
 
@@ -41,23 +45,27 @@ class FilePart extends BaseModel {
                     to: 'files.id',
                 },
             },
+            minioServer: {
+                relation: objection.Model.BelongsToOneRelation,
+                modelClass: MinioServer,
+                join: {
+                    from: 'fileParts.minioServerId',
+                    to: 'minioServers.id',
+                },
+            },
 
         }
     }
 
-    getStream() {
+    async getStream() {
+        const minioClient = await this.getMinioClient()
         return minioClient.getObject(this.bucket, this.objectName)
     }
-    // get publicUrl() {
-    //     return `${config.s3.publicBaseUrl}/${this.bucket}/${this.objectName}`
-    // }
-    // get publicUrlTemplate() {
-    //     return `{{S3_PUBLIC_BASE_URL}}/${this.bucket}/${this.objectName}`
-    // }
 
     async getPresignedPutUrl(expiryInMs = 1000 * 60) {
-        let url = await minioClient.presignedPutObject(this.bucket, this.objectName, expiryInMs / 1000)
-        url = url.replace(/[^/]*\/\/[^/]*\//, `${config.s3.publicBaseUrl}/`)
+        const minioClient = await this.getMinioClient()
+        const url = await minioClient.presignedPutObject(this.bucket, this.objectName, expiryInMs / 1000)
+
         return url
     }
 }

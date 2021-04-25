@@ -10,7 +10,7 @@ livr.Validator.defaultAutoTrim(true)
 livr.Validator.registerDefaultRules(livrExtraRules)
 
 function generateRandomCode(length, charPreset = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') {
-    let charList = []
+    const charList = []
     for (let i = 0; i < length; i++) {
         charList[i] = charPreset[Math.round(Math.random() * (charPreset.length - 1))]
     }
@@ -21,7 +21,7 @@ let counterForUniqueCode = 0
 let lastDateForUniqueCode = 0
 
 function generateUniqueCode(minLength = 0, splitChar = '_') {
-    let dateNow = Date.now()
+    const dateNow = Date.now()
     let result = dateNow.toString(36)
     if (lastDateForUniqueCode == dateNow) {
         counterForUniqueCode++
@@ -30,7 +30,7 @@ function generateUniqueCode(minLength = 0, splitChar = '_') {
         counterForUniqueCode = 0
     }
     lastDateForUniqueCode = dateNow
-    let lengthOfRandomSuffix = minLength - result.length
+    const lengthOfRandomSuffix = minLength - result.length
     if (lengthOfRandomSuffix > 0) {
         result += splitChar + generateRandomCode(lengthOfRandomSuffix - 1)
     }
@@ -46,12 +46,12 @@ function sleep(timeout) {
 }
 
 function deepMap(data, callback) {
-    let result = _.cloneDeep(data)
+    const result = _.cloneDeep(data)
 
     function func(obj) {
-        for (let prop in obj) {
-            let value = obj[prop]
-            let type = typeof value
+        for (const prop in obj) {
+            const value = obj[prop]
+            const type = typeof value
             if (obj.hasOwnProperty(prop)) {
                 if (type == 'object') {
                     func(obj[prop])
@@ -66,15 +66,15 @@ function deepMap(data, callback) {
 }
 
 function project(obj, projection) {
-    let projectedObj = {}
+    const projectedObj = {}
     if (Array.isArray(projection)) {
-        let obj = {}
-        for (let key of projection) {
+        const obj = {}
+        for (const key of projection) {
             obj[key] = true
         }
         projection = obj
     }
-    for (let key in projection) {
+    for (const key in projection) {
         projectedObj[key] = obj[key]
     }
     return projectedObj
@@ -109,17 +109,17 @@ function sortObjectKeys(obj) {
 }
 
 function flattenObject(obj, { delimiter = '_', safe = true } = {}) {
-    let params = { delimiter, safe }
+    const params = { delimiter, safe }
     return flatten(obj, params)
 }
 
 function unflattenObject(obj, { delimiter = '_', safe = true } = {}) {
-    let params = { delimiter, safe }
+    const params = { delimiter, safe }
     return flatten.unflatten(obj, params)
 }
 
 function fillTemplate(str, map) {
-    for (let key in map) {
+    for (const key in map) {
         str = str.replace(`{{${key}}}`, map[key])
     }
     return str
@@ -157,7 +157,7 @@ function getDurationInMs({
     seconds = 0,
     milliseconds = 0,
 }) {
-    let result = ((((weeks * 7 + days) * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds
+    const result = ((((weeks * 7 + days) * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds
     return result
 }
 

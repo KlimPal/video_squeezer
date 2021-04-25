@@ -4,6 +4,8 @@ export async function up(knex, Promise) {
         table.string('host').notNullable()
         table.integer('port').notNullable()
         table.integer('status')
+        table.text('access_key')
+        table.text('encrypted_secret_key')
         table.timestamp('created_at').defaultTo(knex.fn.now())
         table.timestamp('updated_at').defaultTo(knex.fn.now())
         table.timestamp('deleted_at')

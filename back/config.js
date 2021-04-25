@@ -38,20 +38,10 @@ const monitoringPassword = process.env.monitoringPassword || 'password'
 
 const minWsMsgSizeToGzip = 1024 * 5 // 5KB
 
-const s3 = {
-    accessKey: process.env.S3_ACCESS_KEY_ID,
-    secretKey: process.env.S3_SECRET_KEY,
-    endPoint: process.env.S3_END_POINT,
-    port: Number(process.env.S3_PORT),
-    publicBaseUrl: process.env.S3_PUBLIC_BASE_URL,
-    useSSL: process.env.S3_USE_SSL === 'true',
-}
+const { keyForEncryptingMinioServerKey } = process.env
 
 const imgproxyPublicBaseUrl = process.env.IMGPROXY_PUBLIC_BASE_URL
 
-const templateReplacementMap = {
-    S3_PUBLIC_BASE_URL: s3.publicBaseUrl,
-}
 
 const redis = {
     port: process.env.REDIS_PORT || 6379,
@@ -96,9 +86,8 @@ export default {
     tgAuthBotToken,
     monitoringPassword,
     minWsMsgSizeToGzip,
-    s3,
     imgproxyPublicBaseUrl,
-    templateReplacementMap,
     pgConnection,
     bullQueues,
+    keyForEncryptingMinioServerKey,
 }

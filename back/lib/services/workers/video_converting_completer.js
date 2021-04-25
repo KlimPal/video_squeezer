@@ -2,7 +2,6 @@ import path from 'path'
 import { videoConvertingOutput } from '../bull_queues.js'
 import { VideoConvertingJob, File, User } from '../../models/_index.js'
 import { logger } from '../../utils/pino_logger.js'
-import { minioClient } from '../file_api.js'
 import { sendEvent } from '../../routers/handler_ws.js'
 import cf from '../../utils/cf.js'
 
@@ -51,6 +50,7 @@ function initVideoConvertingCompleter() {
             const targetFile = await File.query().findById(convertingJob.targetFileId)
             const sourceFile = await File.query().findById(convertingJob.sourceFileId)
 
+            const minioClient = await sourceFile.getMinioClient()
             const fileStatFromS3 = await minioClient.statObject(targetFile.bucket, targetFile.objectName)
 
 

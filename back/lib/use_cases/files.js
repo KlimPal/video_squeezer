@@ -1,10 +1,14 @@
 import cf from '../utils/cf.js'
-import config from '../../config.js'
-import fileApi from '../services/file_api.js'
-import { File, FilePart } from '../models/_index.js'
+import { File, FilePart, MinioServer } from '../models/_index.js'
 import {
     emitError, errorCodes,
 } from '../utils/error_utils.js'
+
+async function getFileServers() {
+    const servers = await MinioServer.query()
+
+    return servers
+}
 
 async function getPresignedPutObjectUrl(data, { context }) {
     const expiryInMs = 1000 * 60 * 10
@@ -13,10 +17,11 @@ async function getPresignedPutObjectUrl(data, { context }) {
 
     const file = await File.query().insert({
         id: fileId,
-        bucket: fileApi.defaultBucket,
+        bucket: File.defaultBucket,
         objectName,
         authorId: context.userId,
     })
+
 
     const url = await file.getPresignedPutUrl(expiryInMs)
 
@@ -81,11 +86,12 @@ getPartialUpload.rules = {
     fileSize: ['required', 'positive_integer'],
     fileHash: ['required', 'string'],
     fileName: ['required', 'string', { max_length: 255 }],
+    minioServerId: ['string'],
 }
 
 
 async function getPartialUpload(data, { context }) {
-    let partSize = 50 * 1024 * 1024
+    let partSize = 20 * 1024 * 1024
 
     if (data.fileSize / partSize > 100) {
         partSize = Math.round(data.fileSize / 100)
@@ -116,26 +122,44 @@ async function getPartialUpload(data, { context }) {
         }
     }
 
+    let { minioServerId } = data
+    console.log(minioServerId)
+
+    if (minioServerId) {
+        const minioServer = await MinioServer.query().findById(minioServerId)
+        if (!minioServer) {
+            emitError(errorCodes.notFound, { field: 'minioServerId' })
+        }
+    } else {
+        console.log('zaaz')
+
+        const minioServer = await MinioServer.query().findOne({ id: 'knxc1cky' })
+        minioServerId = minioServer.id
+        console.log(minioServerId)
+    }
+
     const file = await File.query().insert({
         id: cf.generateUniqueCode(),
-        bucket: fileApi.defaultBucket,
+        bucket: File.defaultBucket,
         objectName: cf.generateUniqueCode(24),
         authorId: context.userId,
         hash: data.fileHash,
         status: File.STATUSES.PARTIAL_UPLOAD_STARTED,
         size: data.fileSize,
         originalFileName: data.fileName,
+        minioServerId,
     })
 
     const partsNumber = Math.ceil(data.fileSize / partSize)
     const filePartsData = Array(partsNumber).fill().map((_, partIndex) => ({
         id: cf.generateUniqueCode(),
-        bucket: fileApi.defaultBucket,
+        bucket: File.defaultBucket,
         fileId: file.id,
         rangeStart: partIndex * partSize,
         rangeEnd: (partIndex + 1) * partSize,
         objectName: `${file.objectName}_parts/${cf.generateUniqueCode(24)}`,
         status: FilePart.STATUSES.CREATED,
+        minioServerId,
     }))
     const lastPart = filePartsData.slice(-1)[0]
     lastPart.rangeEnd = data.fileSize
@@ -157,5 +181,10 @@ async function getPartialUpload(data, { context }) {
 }
 
 export {
-    getPresignedPutObjectUrl, getPartialUpload, completeFilePart, completePartialUpload, getOwnFiles,
+    getPresignedPutObjectUrl,
+    getPartialUpload,
+    completeFilePart,
+    completePartialUpload,
+    getOwnFiles,
+    getFileServers,
 }

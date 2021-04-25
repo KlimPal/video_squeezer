@@ -16,6 +16,7 @@ const methods = {
     'files.completeFilePart': useCases.files.completeFilePart,
     'files.completePartialUpload': useCases.files.completePartialUpload,
     'files.getOwnFiles': useCases.files.getOwnFiles,
+    'files.getFileServers': useCases.files.getFileServers,
 
     'video.compress': useCases.video.compress,
     'video.getOwnConvertingJobs': useCases.video.getOwnConvertingJobs,

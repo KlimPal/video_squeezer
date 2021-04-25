@@ -154,6 +154,11 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     }
 
     async loadConvertingJobList() {
+
+        let x = await sendWsMsg('files.getFileServers', {})
+        console.log(x)
+
+
         let res = await sendWsMsg('video.getOwnConvertingJobs', {})
         if (!res.result) {
             msgUtils.alert(res.error || 'error', { details: res.details })
@@ -181,7 +186,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         }
 
         this.convertingJobs = res.result
-        console.log(res.result)
+        // console.log(res.result)
     }
     async logout() {
         sendWsMsg('authentication.logout', { token: appState.user.token }).then((data) => {

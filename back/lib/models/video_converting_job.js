@@ -1,6 +1,5 @@
 import objection from 'objection'
 import { User, File } from './_index.js'
-import { minioClient, defaultBucket } from '../services/file_api.js'
 import { BaseModel } from './base.js'
 import cf from '../utils/cf.js'
 import config from '../../config.js'
