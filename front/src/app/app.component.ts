@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { appState } from './globalConfig'
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { sendWsMsg } from './utils/sharedSocket'
+import { SwUpdate } from '@angular/service-worker'
 
 @Component({
     selector: 'app-root',
@@ -13,7 +14,10 @@ export class AppComponent {
     title = 'front';
     showFooterMenu = true;
 
-    constructor(private router: Router) {
+    constructor(
+        private router: Router,
+        private swUpdate: SwUpdate
+    ) {
         function initCssVariableVh() {
             let vh = window.innerHeight * 0.01 + '';
             document.documentElement.style.setProperty('--vh', ''.concat(vh, 'px'));
@@ -34,6 +38,18 @@ export class AppComponent {
         initCssVariableVh();
         initFocusStylingHelper()
         window.addEventListener('resize', initCssVariableVh);
+
+        this.swUpdate.available.subscribe(event => {
+            if (confirm('Update Available. Refresh the page now to update the cache.')) {
+                location.reload();
+            } else {
+                console.log('continue with the older version');
+            }
+        });
+
+        setInterval(() => {
+            this.swUpdate.checkForUpdate();
+        }, 21600);
 
     }
 
