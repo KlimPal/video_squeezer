@@ -84,6 +84,7 @@ docker-compose run --rm --entrypoint "\
     $staging_arg \
     $email_arg \
     $domain_args \
+    --dns-route53-propagation-seconds 10 \
     --rsa-key-size $rsa_key_size \
     --cert-name domain \
     --agree-tos \

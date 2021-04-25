@@ -1,0 +1,18 @@
+{
+    "Comment": "UPSERT a record ",
+    "Changes": [
+        {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "{{FULL_DOMAIN_NAME}}",
+                "Type": "A",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "{{IP}}"
+                    }
+                ]
+            }
+        }
+    ]
+}
