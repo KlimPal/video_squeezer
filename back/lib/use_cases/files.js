@@ -130,7 +130,7 @@ async function getPartialUpload(data, { context }) {
             emitError(errorCodes.notFound, { field: 'minioServerId' })
         }
     } else {
-        const minioServer = await MinioServer.query().findOne({ id: 'knxc1cky' })
+        const minioServer = await MinioServer.query().findOne({ })
         minioServerId = minioServer.id
     }
 
