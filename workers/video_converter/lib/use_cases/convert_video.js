@@ -4,10 +4,28 @@ import fs from 'fs-extra'
 import path from 'path'
 import progressStream from 'progress-stream'
 import util from 'util'
+import minio from 'minio'
 import cf from '../utils/cf.js'
 import config from '../../config.js'
-import { minioClient } from '../services/minio.js'
 import { logger } from '../utils/pino_logger.js'
+import { aes256Decrypt } from '../utils/crypto.js'
+
+
+function createMinioClient({
+    host,
+    port,
+    accessKey,
+    encryptedSecretKey,
+}) {
+    return new minio.Client({
+        endPoint: host,
+        port,
+        useSSL: true,
+        accessKey,
+        secretKey: aes256Decrypt(encryptedSecretKey, config.keyForEncryptingMinioServerKey),
+    })
+}
+
 
 const exec = util.promisify(childProcess.exec)
 
@@ -21,6 +39,7 @@ async function convertVideo({
         sourceExtension,
         convertingOptions,
         targetExtension,
+        minioServer,
     },
     progressCallback,
 }) {
@@ -36,6 +55,13 @@ async function convertVideo({
 
     try {
         filesToRemove.push(tmpSourcePath)
+
+        const minioClient = createMinioClient({
+            host: minioServer.host,
+            port: minioServer.port,
+            accessKey: minioServer.accessKey,
+            encryptedSecretKey: minioServer.encryptedSecretKey,
+        })
         await minioClient.fGetObject(sourceBucket, sourceKey, tmpSourcePath)
 
 

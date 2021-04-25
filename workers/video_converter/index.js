@@ -6,8 +6,6 @@ import { videoConvertingInput, videoConvertingOutput } from './lib/services/bull
 import { logger } from './lib/utils/pino_logger.js'
 
 logger.info({
-    s3Endpoint: config.s3.endPoint,
-    s3Port: config.s3.port,
     inputQueue: {
         host: config.bullQueues.videoConvertingInput.host,
         queueName: config.bullQueues.videoConvertingInput.queueName,
@@ -34,6 +32,14 @@ videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
             nested_object: {
                 height: ['required', 'integer'],
                 crf: ['required', 'integer'],
+            },
+        }],
+        minioServer: ['required', {
+            nested_object: {
+                host: ['required', 'string'],
+                port: ['required', 'integer'],
+                accessKey: ['required', 'string'],
+                encryptedSecretKey: ['required', 'string'],
             },
         }],
     }

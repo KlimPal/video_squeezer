@@ -123,7 +123,6 @@ async function getPartialUpload(data, { context }) {
     }
 
     let { minioServerId } = data
-    console.log(minioServerId)
 
     if (minioServerId) {
         const minioServer = await MinioServer.query().findById(minioServerId)
@@ -131,11 +130,8 @@ async function getPartialUpload(data, { context }) {
             emitError(errorCodes.notFound, { field: 'minioServerId' })
         }
     } else {
-        console.log('zaaz')
-
         const minioServer = await MinioServer.query().findOne({ id: 'knxc1cky' })
         minioServerId = minioServer.id
-        console.log(minioServerId)
     }
 
     const file = await File.query().insert({

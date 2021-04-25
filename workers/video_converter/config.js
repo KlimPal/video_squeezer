@@ -38,22 +38,16 @@ const bullQueues = {
     },
 }
 
-const s3 = {
-    accessKey: process.env.S3_ACCESS_KEY_ID,
-    secretKey: process.env.S3_SECRET_KEY,
-    endPoint: process.env.S3_END_POINT,
-    port: Number(process.env.S3_PORT),
-    publicBaseUrl: process.env.S3_PUBLIC_BASE_URL,
-    useSSL: process.env.S3_USE_SSL === 'true',
-}
 
 const JOBS_CONCURRENCY = Number(process.env.JOBS_CONCURRENCY) || 4
 const tmpDirPath = path.join(thisDirname, 'tmp')
+
+const { keyForEncryptingMinioServerKey } = process.env
 
 export default {
     redis,
     JOBS_CONCURRENCY,
     tmpDirPath,
     bullQueues,
-    s3,
+    keyForEncryptingMinioServerKey,
 }

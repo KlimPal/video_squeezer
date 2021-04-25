@@ -63,7 +63,7 @@ function initConection() {
 }
 initConection()
 
-async function sendWsMsg(method, data = null, connectionTimeout = 1000): Promise<any> {
+async function sendWsMsg(method, data = null, connectionTimeout = 3000): Promise<any> {
     if (socketClosed) {
         await new Promise((resolve) => {
             let subscription = socketOnOpen.subscribe(() => {
