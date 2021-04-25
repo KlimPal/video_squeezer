@@ -20,6 +20,7 @@ async function main() {
         secretKey: options.secretKey,
     })
     console.log('Done')
+    process.exit(0)
 }
 main()
 
