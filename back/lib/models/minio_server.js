@@ -96,7 +96,7 @@ class MinioServer extends BaseModel {
             accessKey,
             encryptedSecretKey,
         })
-        await minioServer.initMinioServers()
+        await minioServer.prepareInstance()
 
         return minioServer
     }
