@@ -6,8 +6,21 @@ import {
 
 async function getFileServers() {
     const servers = await MinioServer.query()
-
-    return servers
+    await Promise.all(servers.map(async (server) => {
+        const testFile = await File.query().findOne({
+            minioServerId: server.id,
+            objectName: 'public/test_1MB',
+        })
+        if (!testFile) {
+            return
+        }
+        server.linkToTestDownloadSpeed = await testFile.getPresignedGetUrl(cf.getDurationInMs({ days: 7 }))
+    }))
+    const result = servers.map((el) => ({
+        ...el.dump(),
+        linkToTestDownloadSpeed: el.linkToTestDownloadSpeed,
+    }))
+    return result
 }
 
 async function getPresignedPutObjectUrl(data, { context }) {
@@ -97,14 +110,17 @@ async function getPartialUpload(data, { context }) {
         partSize = Math.round(data.fileSize / 100)
     }
 
-    const presignedLinkExpiryInMs = 1000 * 60 * 60 * 24 // 1 day
+    const presignedLinkExpiryInMs = cf.getDurationInMs({ days: 1 })
 
     const existingFile = await File.query().findOne({
         authorId: context.userId,
         hash: data.fileHash,
     }).withGraphFetched('fileParts')
+    let { minioServerId } = data
 
-    if (existingFile) {
+    const createNewFileOnNewServer = minioServerId && existingFile && existingFile.minioServerId !== minioServerId
+
+    if (existingFile && !createNewFileOnNewServer) {
         if (existingFile.status === File.STATUSES.UPLOAD_COMPLETED) {
             emitError(errorCodes.alreadyExists, existingFile)
         }
@@ -122,7 +138,6 @@ async function getPartialUpload(data, { context }) {
         }
     }
 
-    let { minioServerId } = data
 
     if (minioServerId) {
         const minioServer = await MinioServer.query().findById(minioServerId)
@@ -170,6 +185,7 @@ async function getPartialUpload(data, { context }) {
         status: filePart.status,
         presignedPutUrl: await filePart.getPresignedPutUrl(presignedLinkExpiryInMs),
     })))
+
 
     return {
         uploadParts,

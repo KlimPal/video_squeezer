@@ -161,7 +161,19 @@ function getDurationInMs({
     return result
 }
 
+async function safeFuncRun(asyncFunc) {
+    let err = null
+    let res = null
+    try {
+        res = await asyncFunc()
+    } catch (e) {
+        err = e
+    }
+    return { err, res }
+}
+
 export default {
+    safeFuncRun,
     generateRandomCode,
     generateUniqueCode,
     sleep,

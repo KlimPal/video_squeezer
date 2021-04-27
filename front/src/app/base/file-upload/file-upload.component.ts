@@ -59,8 +59,8 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-
         this.loadConvertingJobList()
+        this.findBestFileServer()
     }
 
     ngOnDestroy() {
@@ -112,7 +112,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     async compressVideo() {
         let res = await sendWsMsg('video.compress', {
             fileId: this.fileInfo.id,
-            compressOptions: this.compressOptions
+            compressOptions: this.compressOptions,
         })
 
         if (!res.result) {
@@ -153,10 +153,67 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         msgUtils.log('Job removed')
     }
 
+    fileServers = []
+
+    changePreferredServer(serverInfo) {
+        for (let server of this.fileServers) {
+            server.preferred = false
+        }
+        serverInfo.preferred = true
+    }
+    async findBestFileServer() {
+        let res = await sendWsMsg('files.getFileServers', {})
+        if (!res.result) {
+            msgUtils.alert(res.error || 'error', { details: res.details })
+            return
+        }
+        const servers = res.result.filter(el => el.linkToTestDownloadSpeed)
+        const serverInfoList = servers.map(server => ({
+            preferred: false,
+            id: server.id,
+            performance: null,
+            host: server.host,
+            port: server.port,
+            firstByteTimeAsString: null,
+            downloadSpeed: null,
+            downloadSpeedAsString: null,
+            linkToTestDownloadSpeed: server.linkToTestDownloadSpeed
+        }))
+        this.fileServers = serverInfoList
+
+        for (let serverInfo of serverInfoList) {
+            let startAt = Date.now()
+            let response = await fetch(serverInfo.linkToTestDownloadSpeed);
+            let firstByteAt = Date.now()
+            let blob = await response.blob()
+            let fileLoadedAt = Date.now()
+            const performance = {
+                startAt,
+                firstByteAt,
+                fileLoadedAt,
+                statusText: response.statusText,
+                status: response.status,
+                fileSize: blob.size
+            }
+            const downloadSpeed = performance.fileSize / ((fileLoadedAt - startAt) / 1000)
+            serverInfo.performance = performance
+            serverInfo.firstByteTimeAsString = `${firstByteAt - startAt}ms`
+            serverInfo.downloadSpeed = downloadSpeed
+            serverInfo.downloadSpeedAsString = `${cf.getFriendlyFileSize(downloadSpeed)}/s`
+        }
+        let maxSpeed = 0;
+        for (let serverInfo of serverInfoList) {
+            maxSpeed = Math.max(maxSpeed, serverInfo.downloadSpeed)
+        }
+        serverInfoList.find(el => el.downloadSpeed == maxSpeed).preferred = true
+
+
+        console.log(this.fileServers)
+
+
+    }
     async loadConvertingJobList() {
 
-        let x = await sendWsMsg('files.getFileServers', {})
-        console.log(x)
 
 
         let res = await sendWsMsg('video.getOwnConvertingJobs', {})
@@ -240,11 +297,13 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             })
 
         }
+        const minioServerId = this.fileServers.find(el => el.preferred)?.id || null;
 
         res = await sendWsMsg('files.getPartialUpload', {
             fileHash: hash,
             fileSize: file.size,
             fileName: file.name,
+            minioServerId
         })
 
         if (!res.result) {

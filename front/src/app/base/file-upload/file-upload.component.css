@@ -3,7 +3,7 @@
     height: 100%;
     position: absolute;
     width: 100%;
-    background: var(--gray750);
+    background: var(--gray800);
     justify-content: center;
     color: var(--gray400);
     overflow: auto;
@@ -66,6 +66,27 @@
     max-width: 200px;
 }
 
+table.fileServers{
+    margin-bottom: 20px;
+}
+
+
+table.fileServers td{
+    font-size: 0.8em;
+}
+table.fileServers  td:nth-child(1){
+    max-width: 120px;
+    white-space: pre-line;
+}
+table.fileServers tr:nth-child(n+2) td{
+    color:  var(--gray600);
+}
+table.fileServers tr{
+    cursor: pointer;
+}
+table.fileServers tr.preferred td{
+    color: var(--gray300);
+}
 
 table.convertingJobs{
     margin-top: 50px;
@@ -78,10 +99,10 @@ table.convertingJobs  td:nth-child(1){
     max-width: 120px;
     white-space: pre-line;
 }
-table.convertingJobs  td:not(:last-child){
+table  td:not(:last-child){
     border-right: dashed 1px var(--gray600);
 }
-table.convertingJobs  tr:not(:last-child){
+table  tr:not(:last-child){
     border-bottom: dashed 1px var(--gray600);
 }
 

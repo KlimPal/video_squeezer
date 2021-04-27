@@ -1,4 +1,22 @@
 <div class="wrapper">
+    <table class="qqq fileServers">
+        <tr>
+            <td>File Server</td>
+            <td>Speed</td>
+            <td>TTFB</td>
+        </tr>
+        <tr *ngFor="let server of fileServers" [class.preferred]="server.preferred"
+            (click)="changePreferredServer(server)">
+            <td>
+                {{server.host}}
+            </td>
+            <td>
+                {{server.downloadSpeedAsString}}
+            </td>
+            <td>{{server.firstByteTimeAsString}}</td>
+        </tr>
+    </table>
+
     <button class="qqq gray t2 padding10_20" [disabled]="fileUploadingNow">
         <label for="fileUploadInput" class="fileInputLabel" *ngIf="!fileUploadingNow">
         </label>

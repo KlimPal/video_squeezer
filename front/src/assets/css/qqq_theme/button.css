@@ -104,6 +104,10 @@ button.qqq.mat-menu-item:focus{
     cursor: pointer;
 }
 
+.qqq_theme button.qqq.padding10_20>label.fileInputLabel {
+    margin: -10px -20px;
+}
+
 
 .qqq_theme button.qqq.gray {
     background: var(--gray700);
@@ -111,7 +115,7 @@ button.qqq.mat-menu-item:focus{
 }
 
 .qqq_theme button.qqq.gray:hover:not([disabled]) {
-    background: var(--gray800);
+    background: var(--gray750);
     color: white;
 }
 

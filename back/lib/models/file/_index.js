@@ -12,56 +12,6 @@ import { concatObjects, getS3Client } from './utils.js'
 const defaultBucket = 'default'
 
 
-const minioClientMap = {
-
-}
-
-async function getMinioClientByConfig({
-    host, port, accessKey, secretKey,
-}) {
-    const clientId = `${host}-${port}-${accessKey}-${secretKey}`
-    const existing = minioClientMap[clientId]
-
-
-    const client = new minio.Client({
-        endPoint: host,
-        port,
-        useSSL: true,
-        accessKey,
-        secretKey,
-    })
-
-    if (!existing) {
-        await prepareMinioInstance(client)
-    }
-
-
-    minioClientMap[clientId] = client
-    return client
-}
-
-async function prepareMinioInstance(minioClient) {
-    const defaultRegion = 'us-east-1'
-    const bucketListToEnsure = ['default']
-
-    const created = (await minioClient.listBuckets()).map((el) => el.name)
-    const bucketsToCreate = bucketListToEnsure.filter((el) => !created.includes(el))
-
-    await Promise.all(bucketsToCreate.map((name) => minioClient.makeBucket(name, defaultRegion)))
-
-    await minioClient.setBucketPolicy('default', JSON.stringify({
-        Version: '2012-10-17',
-        Statement: [{
-            Sid: 'PublicRead',
-            Effect: 'Allow',
-            Principal: '*',
-            Action: ['s3:GetObject'],
-            Resource: ['arn:aws:s3:::default/*'],
-        }],
-    }))
-}
-
-
 class File extends BaseModel {
     id
     bucket
@@ -95,13 +45,8 @@ class File extends BaseModel {
 
     static async getMinioClientById(minioServerId) {
         const minioServer = await MinioServer.query().findById(minioServerId)
-        const client = await getMinioClientByConfig({
-            host: minioServer.host,
-            port: minioServer.port,
-            accessKey: minioServer.accessKey,
-            secretKey: minioServer.secretKey,
-        })
-        return client
+
+        return minioServer.getMinioClient()
     }
 
     getMinioClient() {

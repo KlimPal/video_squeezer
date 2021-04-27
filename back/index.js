@@ -1,7 +1,5 @@
 import express from 'express'
-import bodyParser from 'body-parser'
 import http from 'http'
-import fs from 'fs'
 import WebSocket from 'ws'
 import basicAuth from 'express-basic-auth'
 import cors from 'cors'
@@ -12,7 +10,8 @@ import { handleHttpRpcRequest } from './lib/routers/handler_http.js'
 import { exportMetricsMiddleware } from './lib/use_cases/metrics.js'
 
 import { initWorkers } from './lib/services/workers/_index.js'
-
+import { prepareResources } from './lib/services/prepare_resources.js'
+import { logger } from './lib/utils/pino_logger.js'
 
 const app = express()
 
@@ -21,11 +20,14 @@ const httpServer = http.createServer(app)
 const wsServer = new WebSocket.Server({ server: httpServer })
 const wsApp = new WebSocketHandler(wsServer)
 
-httpServer.listen(config.httpPort, () => console.log(`http server on ${config.httpPort} port`))
+httpServer.listen(config.httpPort, () => {
+    console.log(`http server on ${config.httpPort} port`)
+    logger.info({ type: 'INTERNAL' }, `http server on ${config.httpPort} port`)
+})
 
 app.use(cors())
-app.use(bodyParser.json({ limit: '10mb' }))
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ limit: '10mb', extended: true }))
 
 
 app.use(express.static(`${config.indexPath}/public/app_dist`, {
@@ -51,6 +53,11 @@ app.use((err, req, res, _) => {
 
 
 initWorkers()
+prepareResources().then(() => {
+    logger.info({ type: 'INTERNAL' }, 'Resources prepared')
+}).catch((e) => {
+    console.log(e)
+})
 
 
 const shutDownSignals = ['SIGINT', 'SIGTERM', 'SIGUSR2']
