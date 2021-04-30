@@ -243,6 +243,124 @@ export let cryptoUtils = {
 
 }
 
+export let fsApi = {
+    getRoot: ({ requestedBytes = 1024 * 1024 * 1024 * 10 } = {}) => {
+        return new Promise((resolve, reject) => {
+            const PERSISTENT = 1
+            navigator['webkitPersistentStorage'].requestQuota(
+                requestedBytes,
+                function (grantedBytes) {
+                    window['webkitRequestFileSystem'](PERSISTENT, grantedBytes, (fs) => {
+                        resolve(fs.root)
+                    }, (err) => { reject(err) });
+                }, (err) => { reject(err) }
+            );
+
+        })
+    },
+    readDir: async (fsDir) => {
+        const dirReader = fsDir.createReader();
+        const result = [];
+
+        function getEntries(dirReader): Promise<any[]> {
+            return new Promise((resolve, reject) => {
+                dirReader.readEntries((results) => {
+                    resolve(results)
+                }, (err) => {
+                    reject(err)
+                });
+            })
+        }
+
+        while (true) {
+            const newEntries = await getEntries(dirReader)
+            if (newEntries.length) {
+                result.push(...newEntries)
+            } else {
+                break
+            }
+        }
+        return result;
+    },
+    getDir: (parentFsDir, dirName) => {
+        return new Promise((resolve, reject) => {
+            parentFsDir.getDirectory(dirName, { create: true }, (fsDir) => {
+                resolve(fsDir)
+            }, (err) => {
+                reject(err)
+            })
+        })
+    },
+    getFileEntry: function (fsDir, fileName): Promise<any> {
+        return new Promise((resolve, reject) => {
+            fsDir.getFile(fileName, {}, (fileEntry) => {
+                resolve(fileEntry)
+            }, (err) => {
+                reject(err)
+            })
+        })
+    },
+    getFile: function (fileEntry): Promise<File> {
+        return new Promise((resolve, reject) => {
+            fileEntry.file(async (file) => {
+                resolve(file)
+            }, (err) => {
+                reject(err)
+            })
+        })
+    },
+    rmFile: (fileEntry) => {
+        return new Promise((resolve, reject) => {
+            fileEntry.remove(() => {
+                resolve(null)
+            }, (err) => {
+                reject(err)
+            });
+        })
+    },
+    readFileAsText: async (fileEntry) => {
+        const file = await fsApi.getFile(fileEntry)
+        const text = await file['text']()
+        return text
+    },
+    rmDir: (dirEntry) => {
+        return new Promise((resolve, reject) => {
+            dirEntry.removeRecursively(() => {
+                resolve(null)
+            }, (err) => {
+                reject(err)
+            })
+        })
+    },
+    readFileAsBuffer: async (fileEntry) => {
+        const file = await fsApi.getFile(fileEntry)
+        const arrayBuffer = await file['arrayBuffer']()
+        return arrayBuffer
+    },
+    saveFile: (fsDir, fileName, data) => {
+        return new Promise((resolve, reject) => {
+            fsDir.getFile(fileName, { create: true }, (file) => {
+                file.createWriter((fileWriter) => {
+                    let blob = new Blob([data])
+                    fileWriter.write(blob)
+                    fileWriter.onwriteend = (event) => {
+                        resolve(event)
+                    };
+                    fileWriter.onerror = (err) => {
+                        reject(err)
+                    };
+                }, (err) => {
+                    reject(err)
+                })
+            }, (err) => {
+                reject(err)
+            })
+        })
+    }
+}
+
+
+
 export let inputUtils = {
     handlePhoneInput: (event, obj, property) => {
         let result = cf.formatPhoneNumber(event.target.value)
