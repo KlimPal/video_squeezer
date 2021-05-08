@@ -38,13 +38,14 @@ class MinioServer extends BaseModel {
     }
 
     async prepareInstance() {
-        const bucketListToEnsure = [this.bucket]
-
         let minioClient
-        let createdBuckets
+
         try {
             minioClient = this.getMinioClient()
-            createdBuckets = (await minioClient.listBuckets()).map((el) => el.name)
+            const createdBuckets = (await minioClient.listBuckets()).map((el) => el.name)
+            if (!createdBuckets.includes(this.bucket)) {
+                await minioClient.makeBucket(this.bucket, this.region)
+            }
         } catch (err) {
             await this.$query().updateAndFetch({
                 status: MinioServer.STATUSES.UNREACHABLE,
@@ -55,11 +56,6 @@ class MinioServer extends BaseModel {
             }, 'Minio server unreachable')
             return
         }
-
-
-        const bucketsToCreate = bucketListToEnsure.filter((el) => !createdBuckets.includes(el))
-        await Promise.all(bucketsToCreate.map((name) => minioClient.makeBucket(name, this.region)))
-
 
         const testFileObjectName = 'public/test_1MB'
 
