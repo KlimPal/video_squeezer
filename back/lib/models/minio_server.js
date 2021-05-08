@@ -106,6 +106,7 @@ class MinioServer extends BaseModel {
         accessKey,
         secretKey,
         region,
+        bucket,
     }) {
         const cryptoKey = config.keyForEncryptingMinioServerKey
         if (!cryptoKey) {
@@ -118,6 +119,7 @@ class MinioServer extends BaseModel {
             accessKey,
             encryptedSecretKey,
             region,
+            bucket,
         })
         await minioServer.prepareInstance()
 
