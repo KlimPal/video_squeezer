@@ -155,6 +155,7 @@ class File extends BaseModel {
             port: minioServer.port,
             accessKey: minioServer.accessKey,
             secretKey: minioServer.secretKey,
+            region: minioServer.region,
         })
 
         await concatObjects({

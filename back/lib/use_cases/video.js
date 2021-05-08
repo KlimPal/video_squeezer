@@ -73,7 +73,7 @@ async function compress(validData, { context }) {
     const jobId = cf.generateUniqueCode() // sha256hex(JSON.stringify(validData))
     const originalFileExtension = file.extension
 
-    let targetExtension = '.mp4'
+    const targetExtension = '.mp4'
 
     let targetKey = `users/${userId}/converted/${cf.generateUniqueCode()}${targetExtension}`
     if (originalFileExtension === '.zip') {

@@ -8,7 +8,7 @@ class WebSocketHandler {
     }
 
     on(routerName, cb) {
-        let exp = pathToRegexp(routerName)
+        const exp = pathToRegexp(routerName)
         this.wsServer.on('connection', (ws, req) => {
             if (req.url.match(exp)) {
                 cb(ws, req)

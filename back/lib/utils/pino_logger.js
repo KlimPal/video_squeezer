@@ -22,7 +22,7 @@ const logger = pino({
 const logTypes = {
     INTERNAL: 'INTERNAL',
     API_RESPONSE: 'API_RESPONSE',
-    API_CALL: 'API_CALL'
+    API_CALL: 'API_CALL',
 }
 
 export { logger, logTypes }

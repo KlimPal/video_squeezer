@@ -6,7 +6,7 @@ import {
 
 async function getFileServers() {
     const servers = await MinioServer.query().where({
-        status: MinioServer.STATUSES.ACTIVE
+        status: MinioServer.STATUSES.ACTIVE,
     })
     await Promise.all(servers.map(async (server) => {
         const testFile = await File.query().findOne({

@@ -13,7 +13,7 @@ const { google } = googleapis
 
 let sessionList = []
 
-let googleAuth = {
+const googleAuth = {
     client: new google.auth.OAuth2(
         config.GOOGLE_CLIENT_ID,
         config.GOOGLE_CLIENT_SECRET,
@@ -22,7 +22,7 @@ let googleAuth = {
 }
 
 function getClientIpByExpressReq(req) {
-    let xForwardedFor = req.headers['x-forwarded-for'] && req.headers['x-forwarded-for'].split(',')[0].trim()
+    const xForwardedFor = req.headers['x-forwarded-for'] && req.headers['x-forwarded-for'].split(',')[0].trim()
     return xForwardedFor || req.headers['x-real-ip'] || req.connection.remoteAddress
 }
 
@@ -44,7 +44,7 @@ function getOauthUrl({ type }) {
     const urls = {
         google: getGoogleOauthUrl,
     }
-    let url = urls[type]()
+    const url = urls[type]()
     if (!url) {
         emitError(errorCodes.unknownError)
     }
@@ -70,9 +70,9 @@ getToken.rules = {
 getToken.public = true
 async function getToken({ googleAuthCode, telegramAuthData }) {
     if (googleAuthCode) {
-        let { tokens } = await googleAuth.client.getToken(googleAuthCode)
+        const { tokens } = await googleAuth.client.getToken(googleAuthCode)
         googleAuth.client.setCredentials(tokens)
-        let googleProfile = await getJson('https://www.googleapis.com/oauth2/v1/userinfo', {
+        const googleProfile = await getJson('https://www.googleapis.com/oauth2/v1/userinfo', {
             alt: 'json',
             access_token: tokens.access_token,
         })
@@ -81,7 +81,7 @@ async function getToken({ googleAuthCode, telegramAuthData }) {
         if (!user) {
             user = await registerUser({ googleProfile })
         }
-        let session = await generateSession(user.id)
+        const session = await generateSession(user.id)
         if (!session) {
             throw new Error('invalid user')
         }
@@ -90,14 +90,14 @@ async function getToken({ googleAuthCode, telegramAuthData }) {
     }
 
     if (telegramAuthData) {
-        let authHash = telegramAuthData.hash
+        const authHash = telegramAuthData.hash
         delete telegramAuthData.hash
 
-        let dataCheck = []
-        for (let key in telegramAuthData) {
+        const dataCheck = []
+        for (const key in telegramAuthData) {
             dataCheck.push(`${key}=${telegramAuthData[key]}`)
         }
-        let dataCheckStr = dataCheck.sort().join('\n')
+        const dataCheckStr = dataCheck.sort().join('\n')
 
         const secretKey = crypto.createHash('sha256').update(config.tgAuthBotToken).digest()
         const hash = crypto.createHmac('sha256', secretKey).update(dataCheckStr).digest('hex')
@@ -115,7 +115,7 @@ async function getToken({ googleAuthCode, telegramAuthData }) {
         if (!user) {
             user = await registerUser({ telegramAuthData })
         }
-        let session = await generateSession(user.id)
+        const session = await generateSession(user.id)
         if (!session) {
             emitError(errorCodes.internalError)
         }
@@ -155,7 +155,7 @@ async function registerUser({ googleProfile, telegramAuthData }) {
     if (!userName) {
         emitError(errorCodes.internalError)
     }
-    let user = await User.query().insert({
+    const user = await User.query().insert({
         userName,
         photoUrl,
         authenticationMethods,
@@ -168,12 +168,12 @@ async function registerUser({ googleProfile, telegramAuthData }) {
 }
 
 async function generateSession(userId) {
-    let user = await User.query().findById(userId)
+    const user = await User.query().findById(userId)
     if (!user) {
         emitError(errorCodes.userNotFound)
     }
-    let dateNow = Date.now()
-    let session = {
+    const dateNow = Date.now()
+    const session = {
         sessionId: cf.generateUniqueCode(),
         token: cf.generateUniqueCode(64),
         userId: user.id,
@@ -186,7 +186,7 @@ async function generateSession(userId) {
 }
 
 async function getUserIdByToken(token) {
-    for (let session of sessionList) {
+    for (const session of sessionList) {
         if (session && session.token === token) {
             session.lastActivityDate = Date.now()
             return session.userId
@@ -203,7 +203,7 @@ checkSession.rules = {
     }],
 }
 function checkSession({ token, getUserInfo }, { context }) {
-    for (let session of sessionList) {
+    for (const session of sessionList) {
         if (session && session.token === token) {
             context.userId = session.userId
             context.sessionId = session.sessionId
@@ -222,7 +222,7 @@ logout.rules = {
 }
 function logout({ token }, { context }) {
     for (let i = 0; i < sessionList.length; i++) {
-        let session = sessionList[i]
+        const session = sessionList[i]
         if (session && session.sessionId === context.sessionId) {
             sessionList[i] = null
             context.userId = null
@@ -240,7 +240,7 @@ function logout({ token }, { context }) {
 
 const sessionsDocumentType = 'sessions'
 async function retrieveSessionsFromDb() {
-    let document = await Document.query().findOne({
+    const document = await Document.query().findOne({
         type: sessionsDocumentType,
     })
     if (document && document.data && document.data.list.length) {
@@ -251,7 +251,7 @@ async function retrieveSessionsFromDb() {
 retrieveSessionsFromDb()
 
 config.gracefulShutdownFuncList.push(async () => {
-    let sessionsToSave = sessionList.filter((el) => el)
+    const sessionsToSave = sessionList.filter((el) => el)
     await Document.query().delete().where({
         type: sessionsDocumentType,
     })

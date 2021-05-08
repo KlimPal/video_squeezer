@@ -23,7 +23,7 @@ let lastDateForUniqueCode = 0
 function generateUniqueCode(minLength = 0, splitChar = '_') {
     const dateNow = Date.now()
     let result = dateNow.toString(36)
-    if (lastDateForUniqueCode == dateNow) {
+    if (lastDateForUniqueCode === dateNow) {
         counterForUniqueCode++
         result += splitChar + counterForUniqueCode.toString(36)
     } else {
@@ -53,7 +53,7 @@ function deepMap(data, callback) {
             const value = obj[prop]
             const type = typeof value
             if (obj.hasOwnProperty(prop)) {
-                if (type == 'object') {
+                if (type === 'object') {
                     func(obj[prop])
                 } else {
                     obj[prop] = callback(obj[prop])

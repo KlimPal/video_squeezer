@@ -31,7 +31,7 @@ class MinioServer extends BaseModel {
 
     static STATUSES = {
         ACTIVE: 'ACTIVE',
-        UNREACHABLE: 'UNREACHABLE'
+        UNREACHABLE: 'UNREACHABLE',
     }
     static get tableName() {
         return 'minio_servers'
@@ -48,11 +48,11 @@ class MinioServer extends BaseModel {
             createdBuckets = (await minioClient.listBuckets()).map((el) => el.name)
         } catch (err) {
             await this.$query().updateAndFetch({
-                status: MinioServer.STATUSES.UNREACHABLE
+                status: MinioServer.STATUSES.UNREACHABLE,
             })
             cf.logger.warn({
                 minioServer: this,
-                type: cf.logTypes.INTERNAL
+                type: cf.logTypes.INTERNAL,
             }, 'Minio server unreachable')
             return
         }
@@ -83,10 +83,9 @@ class MinioServer extends BaseModel {
         }
         if (this.status !== MinioServer.STATUSES.ACTIVE) {
             await this.$query().updateAndFetch({
-                status: MinioServer.STATUSES.ACTIVE
+                status: MinioServer.STATUSES.ACTIVE,
             })
         }
-
     }
 
     get secretKey() {
@@ -102,6 +101,7 @@ class MinioServer extends BaseModel {
             useSSL: true,
             accessKey: this.accessKey,
             secretKey: this.secretKey,
+            region: this.region,
         })
     }
 
@@ -110,6 +110,7 @@ class MinioServer extends BaseModel {
         port,
         accessKey,
         secretKey,
+        region,
     }) {
         const cryptoKey = config.keyForEncryptingMinioServerKey
         if (!cryptoKey) {
@@ -121,6 +122,7 @@ class MinioServer extends BaseModel {
             port,
             accessKey,
             encryptedSecretKey,
+            region,
         })
         await minioServer.prepareInstance()
 

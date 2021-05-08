@@ -7,6 +7,7 @@ program
     .option('-h, --host <host>', 'HOST')
     .option('-a, --access-key <accessKey>', 'ACCESS_KEY')
     .option('-s, --secret-key <secretKey>', 'SECRET_KEY')
+    .option('-r, --region <region>', 'REGION')
 
 program.parse(process.argv)
 
@@ -18,6 +19,7 @@ async function main() {
         port: options.port,
         accessKey: options.accessKey,
         secretKey: options.secretKey,
+        region: options.region,
     })
     console.log('Done')
     process.exit(0)

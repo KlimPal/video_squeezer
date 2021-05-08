@@ -6,6 +6,7 @@ function getS3Client({
     port,
     accessKey,
     secretKey,
+    region,
 }) {
     return new AWS.S3({
         endpoint: `https://${host}:${port}`,
@@ -13,6 +14,7 @@ function getS3Client({
         accessKeyId: accessKey,
         secretAccessKey: secretKey,
         s3ForcePathStyle: true,
+        region,
     })
 }
 
