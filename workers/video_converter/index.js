@@ -73,3 +73,25 @@ videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
 
     return result
 })
+
+
+config.gracefulShutdownFuncList.push(() => {
+    videoConvertingInput.close()
+    videoConvertingOutput.close()
+})
+
+
+const shutDownSignals = ['SIGINT', 'SIGTERM', 'SIGUSR2']
+
+shutDownSignals.forEach((signal) => {
+    process.on(signal, async () => {
+        try {
+            await Promise.all(config.gracefulShutdownFuncList.map((el) => el()))
+            process.exit()
+        } catch (e) {
+            console.log(e)
+            process.exit()
+        }
+    })
+})
+

@@ -47,11 +47,14 @@ const tmpDirPath = path.join(thisDirname, 'tmp')
 
 const { keyForEncryptingMinioServerKey } = process.env
 
+const gracefulShutdownFuncList = []
+
 export default {
     redis,
     JOBS_CONCURRENCY,
     tmpDirPath,
     bullQueues,
     keyForEncryptingMinioServerKey,
-    indexPath
+    indexPath,
+    gracefulShutdownFuncList
 }
