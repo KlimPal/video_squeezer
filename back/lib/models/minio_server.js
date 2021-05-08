@@ -38,7 +38,6 @@ class MinioServer extends BaseModel {
     }
 
     async prepareInstance() {
-        const defaultRegion = 'us-east-1'
         const bucketListToEnsure = [File.defaultBucket]
 
         let minioClient
@@ -59,7 +58,7 @@ class MinioServer extends BaseModel {
 
 
         const bucketsToCreate = bucketListToEnsure.filter((el) => !createdBuckets.includes(el))
-        await Promise.all(bucketsToCreate.map((name) => minioClient.makeBucket(name, defaultRegion)))
+        await Promise.all(bucketsToCreate.map((name) => minioClient.makeBucket(name, this.region)))
 
 
         const testFileObjectName = 'public/test_1MB'
