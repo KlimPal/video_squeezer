@@ -50,6 +50,8 @@ class MinioServer extends BaseModel {
             await this.$query().updateAndFetch({
                 status: MinioServer.STATUSES.UNREACHABLE,
             })
+            console.log(err)
+
             cf.logger.warn({
                 minioServer: this,
                 type: cf.logTypes.INTERNAL,
