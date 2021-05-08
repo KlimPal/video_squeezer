@@ -4,9 +4,12 @@ import { fileURLToPath } from 'url'
 import fs from 'fs'
 
 const thisDirname = path.dirname(fileURLToPath(import.meta.url))
+const indexPath = thisDirname
 
 
 dotenv.config()
+
+
 
 const redis = {
     port: process.env.REDIS_PORT || 6379,
@@ -50,4 +53,5 @@ export default {
     tmpDirPath,
     bullQueues,
     keyForEncryptingMinioServerKey,
+    indexPath
 }

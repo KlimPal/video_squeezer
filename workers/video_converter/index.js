@@ -26,7 +26,7 @@ videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
         sourceKey: ['required', 'string'],
         targetBucket: ['required', 'string'],
         targetKey: ['required', 'string'],
-        sourceExtension: ['required', { one_of: ['.mov', '.mp4'] }],
+        sourceExtension: ['required', 'to_lc', { one_of: ['.mov', '.mp4', '.webm', '.mkv', '.zip'] }],
         targetExtension: ['required', { one_of: ['.mp4'] }],
         convertingOptions: ['required', {
             nested_object: {

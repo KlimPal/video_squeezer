@@ -71,10 +71,14 @@ async function compress(validData, { context }) {
     !file && emitError(errorCodes.notFound)
 
     const jobId = cf.generateUniqueCode() // sha256hex(JSON.stringify(validData))
+    const originalFileExtension = file.extension
 
-    const targetExtension = '.mp4'
+    let targetExtension = '.mp4'
 
-    const targetKey = `users/${userId}/converted/${cf.generateUniqueCode()}${targetExtension}`
+    let targetKey = `users/${userId}/converted/${cf.generateUniqueCode()}${targetExtension}`
+    if (originalFileExtension === '.zip') {
+        targetKey = `users/${userId}/converted/${cf.generateUniqueCode()}.zip`
+    }
 
     const targetFile = await File.query().insert({
         bucket: file.bucket,

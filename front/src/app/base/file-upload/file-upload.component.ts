@@ -58,6 +58,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         this.eventsSubscriptions.push(subscription)
     }
 
+
     ngOnInit(): void {
         this.loadConvertingJobList()
         this.findBestFileServer()
@@ -72,6 +73,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     eventsSubscriptions = []
     fileUploadingNow = false;
     uploadStatusText = ''
+    fileInputElement = null
 
     videoSizeOptions = [
         { value: '240', label: '240p' },
@@ -121,6 +123,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             msgUtils.success('Job created')
             await this.loadConvertingJobList()
         }
+        this.fileInputElement.value = null
         this.isButtonCompressDisabled = true;
         this.fileInfo = {
             id: null,
@@ -260,12 +263,21 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     }
 
     async handleFileSelect(event) {
+
         //console.log(this.jobOptions);
+        this.fileInputElement = event.srcElement
 
         let file = event.target.files[0];
         if (!file) {
             return;
         }
+        const allowedExtension = ['.mp4', '.mov', '.mkv', '.webm', '.zip']
+        if (!allowedExtension.some(ext => file.name.toLowerCase().endsWith(ext))) {
+            msgUtils.alert(`Allowed extensions: ${allowedExtension.join(', ')}`)
+            event.srcElement.value = null
+            return
+        }
+
         this.fileInfo.name = file.name;
         this.fileInfo.sizeAsString = cf.getFriendlyFileSize(file.size)
 

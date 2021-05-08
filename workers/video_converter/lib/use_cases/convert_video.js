@@ -77,19 +77,43 @@ async function convertVideo({
 
         const { crf, height, ffmpegPreset = 'veryfast' } = convertingOptions
 
-        const outputFileName = `${cf.generateUniqueCode(24)}_converted${targetExtension}`
-        const outputFilePath = path.join(config.tmpDirPath, outputFileName)
-
-        filesToRemove.push(outputFilePath)
-        const command = `ffmpeg -loglevel error -i "${tmpSourcePath}" `
-            + `-filter:v scale=-2:${height} -c:v libx264 -preset ${ffmpegPreset} `
-            + `-crf ${crf} "${outputFilePath}"`
+        let outputFileName
+        let outputFilePath
+        let command
 
         const convertingStartedAt = Date.now()
-        let { stderr } = await exec(command)
-        stderr = stderr.trim()
-        if (stderr) {
-            throw new Error(stderr)
+
+        const ffmpegOptions = `-filter:v scale=-2:${height} -c:v libx264 -preset ${ffmpegPreset} `
+            + `-crf ${crf}`
+
+        if (sourceExtension === '.zip') {
+            const bashScriptPath = path.join(config.indexPath, 'lib', 'use_cases', 'utils', 'convert_videos_in_zip.sh')
+            outputFileName = `${cf.generateUniqueCode(24)}_converted.zip`
+            outputFilePath = path.join(config.tmpDirPath, outputFileName)
+            filesToRemove.push(outputFilePath)
+            command = `input_zip_path="${tmpSourcePath}" `
+                + `output_zip_path="${outputFilePath}" `
+                + `out_video_ext="${targetExtension}" `
+                + `ffmpeg_options="${ffmpegOptions}" `
+                + `sh ${bashScriptPath}`
+
+            let { exitCode, stderr, stdout } = await cf.execCommand(command)
+
+            if (exitCode !== 0) {
+                throw new Error(stderr)
+            }
+        } else {
+            outputFileName = `${cf.generateUniqueCode(24)}_converted${targetExtension}`
+            outputFilePath = path.join(config.tmpDirPath, outputFileName)
+
+            filesToRemove.push(outputFilePath)
+            command = `ffmpeg -loglevel error -i "${tmpSourcePath}" `
+                + `${ffmpegOptions} `
+                + `"${outputFilePath}"`
+            let { exitCode, stderr } = await cf.execCommand(command)
+            if (exitCode !== 0) {
+                throw new Error(stderr)
+            }
         }
 
         const outputFileStat = await fs.stat(outputFilePath)
@@ -97,7 +121,7 @@ async function convertVideo({
         logger.info({
             jobId,
             stepName: 'CONVERT',
-            ffmpegCommand: command,
+            convertCommand: command,
             outputFileSize: outputFileStat.size,
             outputFileSizeAsString: cf.getFriendlyFileSize(outputFileStat.size),
             duration: Date.now() - convertingStartedAt,

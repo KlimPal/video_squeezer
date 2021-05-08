@@ -1,8 +1,23 @@
 import livr from 'livr'
 import livrExtraRules from 'livr-extra-rules'
+import childProcess from 'child_process'
 
 livr.Validator.defaultAutoTrim(true)
 livr.Validator.registerDefaultRules(livrExtraRules)
+
+export function execCommand(command, { env } = {}) {
+    return new Promise((resolve) => {
+        childProcess.exec(command, { shell: '/bin/bash', env }, (error, stdout, stderr) => {
+            const exitCode = error?.code ?? 0;
+
+            resolve({
+                exitCode,
+                stdout,
+                stderr
+            });
+        });
+    });
+}
 
 function generateRandomCode(length, charPreset = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') {
     const charList = []
@@ -97,4 +112,5 @@ export default {
     livr,
     livrValidate,
     getFriendlyFileSize,
+    execCommand
 }
