@@ -1,0 +1,18 @@
+{
+    "Comment": "UPSERT a record ",
+    "Changes": [
+        {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "109-197-216-141.minio.video-squeezer.klimpal.com",
+                "Type": "A",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "109.197.216.141"
+                    }
+                ]
+            }
+        }
+    ]
+}
