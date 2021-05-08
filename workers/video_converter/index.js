@@ -40,6 +40,7 @@ videoConvertingInput.process(config.JOBS_CONCURRENCY, async (job) => {
                 port: ['required', 'integer'],
                 accessKey: ['required', 'string'],
                 encryptedSecretKey: ['required', 'string'],
+                region: ['required', 'string'],
             },
         }],
     }
@@ -86,7 +87,7 @@ const shutDownSignals = ['SIGINT', 'SIGTERM', 'SIGUSR2']
 shutDownSignals.forEach((signal) => {
     process.on(signal, async () => {
         try {
-            await Promise.all(config.gracefulShutdownFuncList.map((el) => el()))
+            await Promise.all(config.gracefulShutdownFuncList.map(el => el()))
             process.exit()
         } catch (e) {
             console.log(e)
