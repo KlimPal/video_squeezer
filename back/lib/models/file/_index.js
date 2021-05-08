@@ -2,14 +2,13 @@ import objection from 'objection'
 import path from 'path'
 import fs from 'fs-extra'
 import minio from 'minio'
+import { file } from 'googleapis/build/src/apis/file'
 import { User, FilePart, MinioServer } from '../_index.js'
 import { BaseModel } from '../base.js'
 import cf from '../../utils/cf.js'
 import { concatFiles } from '../../utils/files.js'
 import config from '../../../config.js'
 import { concatObjects, getS3Client } from './utils.js'
-
-const defaultBucket = 'default'
 
 
 class File extends BaseModel {
@@ -37,11 +36,10 @@ class File extends BaseModel {
         await minioClient.removeObject(this.bucket, this.objectName)
     }
 
-    static defaultBucket = defaultBucket
-
     static get tableName() {
         return 'files'
     }
+
 
     static async getMinioClientById(minioServerId) {
         const minioServer = await MinioServer.query().findById(minioServerId)
@@ -88,13 +86,14 @@ class File extends BaseModel {
         minioServerId, metaData = null, authorId = null, originalFileName,
     } = {}) {
         const objectName = cf.generateUniqueCode(24)
+        const minioServer = await MinioServer.query().findById(minioServerId)
         const minioClient = await File.getMinioClientById(minioServerId)
 
-        await minioClient.putObject(defaultBucket, objectName, stringOrBufferOrStream, metaData)
-        const stat = await minioClient.statObject(defaultBucket, objectName)
+        await minioClient.putObject(minioServer.bucket, objectName, stringOrBufferOrStream, metaData)
+        const stat = await minioClient.statObject(minioServer.bucket, objectName)
         return File.query().insert({
             objectName,
-            bucket: defaultBucket,
+            bucket: minioServer.bucket,
             metaData,
             authorId,
             size: stat.size,

@@ -6,14 +6,14 @@ import config from '../../config.js'
 import { aes256Encrypt, aes256Decrypt } from '../utils/crypto.js'
 import cf from '../utils/cf.js'
 
-const { defaultBucket } = File
-
 
 class MinioServer extends BaseModel {
     id
     host
     port
     status
+    bucket
+    region
     accessKey
     encryptedSecretKey
     createdAt
@@ -38,7 +38,7 @@ class MinioServer extends BaseModel {
     }
 
     async prepareInstance() {
-        const bucketListToEnsure = [File.defaultBucket]
+        const bucketListToEnsure = [this.bucket]
 
         let minioClient
         let createdBuckets
@@ -63,9 +63,9 @@ class MinioServer extends BaseModel {
 
         const testFileObjectName = 'public/test_1MB'
 
-        const { res, err } = await cf.safeFuncRun(() => minioClient.statObject(defaultBucket, testFileObjectName))
+        const { res, err } = await cf.safeFuncRun(() => minioClient.statObject(this.bucket, testFileObjectName))
         if (err?.code === 'NotFound') {
-            await minioClient.fPutObject(defaultBucket, testFileObjectName, path.join(config.indexPath, 'constants', 'random_1MB'))
+            await minioClient.fPutObject(this.bucket, testFileObjectName, path.join(config.indexPath, 'constants', 'random_1MB'))
         }
         const existingTestFile = await File.query().findOne({
             objectName: testFileObjectName,
@@ -75,8 +75,8 @@ class MinioServer extends BaseModel {
             await File.query().insert({
                 objectName: testFileObjectName,
                 minioServerId: this.id,
-                bucket: defaultBucket,
-                size: (await minioClient.statObject(defaultBucket, testFileObjectName)).size,
+                bucket: this.bucket,
+                size: (await minioClient.statObject(this.bucket, testFileObjectName)).size,
                 status: File.STATUSES.UPLOAD_COMPLETED,
             })
         }

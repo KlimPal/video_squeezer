@@ -26,24 +26,7 @@ async function getFileServers() {
 }
 
 async function getPresignedPutObjectUrl(data, { context }) {
-    const expiryInMs = 1000 * 60 * 10
-    const fileId = cf.generateUniqueCode()
-    const objectName = cf.generateUniqueCode(24)
-
-    const file = await File.query().insert({
-        id: fileId,
-        bucket: File.defaultBucket,
-        objectName,
-        authorId: context.userId,
-    })
-
-
-    const url = await file.getPresignedPutUrl(expiryInMs)
-
-    return {
-        url,
-        fileId,
-    }
+    emitError(errorCodes.notPermitted)
 }
 
 
@@ -140,21 +123,21 @@ async function getPartialUpload(data, { context }) {
         }
     }
 
-
+    let minioServer
     if (minioServerId) {
-        const minioServer = await MinioServer.query().findById(minioServerId)
+        minioServer = await MinioServer.query().findById(minioServerId)
         if (!minioServer) {
             emitError(errorCodes.notFound, { field: 'minioServerId' })
         }
     } else {
-        const minioServer = await MinioServer.query().findOne({})
+        minioServer = await MinioServer.query().findOne({ status: MinioServer.STATUSES.ACTIVE })
         minioServerId = minioServer.id
     }
 
     const targetObjectName = `users/${context.userId}/${cf.generateUniqueCode()}`
     const file = await File.query().insert({
         id: cf.generateUniqueCode(),
-        bucket: File.defaultBucket,
+        bucket: minioServer.bucket,
         objectName: targetObjectName,
         authorId: context.userId,
         hash: data.fileHash,
@@ -167,7 +150,7 @@ async function getPartialUpload(data, { context }) {
     const partsNumber = Math.ceil(data.fileSize / partSize)
     const filePartsData = Array(partsNumber).fill().map((_, partIndex) => ({
         id: cf.generateUniqueCode(),
-        bucket: File.defaultBucket,
+        bucket: minioServer.bucket,
         fileId: file.id,
         rangeStart: partIndex * partSize,
         rangeEnd: (partIndex + 1) * partSize,

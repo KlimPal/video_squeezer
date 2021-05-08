@@ -7,6 +7,7 @@ export async function up(knex, Promise) {
         table.text('access_key')
         table.text('encrypted_secret_key')
         table.string('region')
+        table.string('bucket')
         table.timestamp('created_at').defaultTo(knex.fn.now())
         table.timestamp('updated_at').defaultTo(knex.fn.now())
         table.timestamp('deleted_at')
