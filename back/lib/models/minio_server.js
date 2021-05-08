@@ -42,6 +42,8 @@ class MinioServer extends BaseModel {
 
         try {
             minioClient = this.getMinioClient()
+            console.log(this)
+
             const createdBuckets = (await minioClient.listBuckets()).map((el) => el.name)
             if (!createdBuckets.includes(this.bucket)) {
                 await minioClient.makeBucket(this.bucket, this.region)
