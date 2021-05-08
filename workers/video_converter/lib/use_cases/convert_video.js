@@ -16,8 +16,10 @@ function createMinioClient({
     port,
     accessKey,
     encryptedSecretKey,
+    region,
 }) {
     return new minio.Client({
+        region,
         endPoint: host,
         port,
         useSSL: true,
@@ -57,6 +59,7 @@ async function convertVideo({
         filesToRemove.push(tmpSourcePath)
 
         const minioClient = createMinioClient({
+            region: minioServer.region,
             host: minioServer.host,
             port: minioServer.port,
             accessKey: minioServer.accessKey,
@@ -97,7 +100,7 @@ async function convertVideo({
                 + `ffmpeg_options="${ffmpegOptions}" `
                 + `sh ${bashScriptPath}`
 
-            let { exitCode, stderr, stdout } = await cf.execCommand(command)
+            const { exitCode, stderr, stdout } = await cf.execCommand(command)
 
             if (exitCode !== 0) {
                 throw new Error(stderr)
@@ -110,7 +113,7 @@ async function convertVideo({
             command = `ffmpeg -loglevel error -i "${tmpSourcePath}" `
                 + `${ffmpegOptions} `
                 + `"${outputFilePath}"`
-            let { exitCode, stderr } = await cf.execCommand(command)
+            const { exitCode, stderr } = await cf.execCommand(command)
             if (exitCode !== 0) {
                 throw new Error(stderr)
             }

@@ -8,15 +8,15 @@ livr.Validator.registerDefaultRules(livrExtraRules)
 export function execCommand(command, { env } = {}) {
     return new Promise((resolve) => {
         childProcess.exec(command, { shell: '/bin/bash', env }, (error, stdout, stderr) => {
-            const exitCode = error?.code ?? 0;
+            const exitCode = error?.code ?? 0
 
             resolve({
                 exitCode,
                 stdout,
-                stderr
-            });
-        });
-    });
+                stderr,
+            })
+        })
+    })
 }
 
 function generateRandomCode(length, charPreset = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') {
@@ -112,5 +112,5 @@ export default {
     livr,
     livrValidate,
     getFriendlyFileSize,
-    execCommand
+    execCommand,
 }
