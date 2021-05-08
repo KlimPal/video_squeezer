@@ -11,7 +11,9 @@ import { exportMetricsMiddleware } from './lib/use_cases/metrics.js'
 
 import { initWorkers } from './lib/services/workers/_index.js'
 import { prepareResources } from './lib/services/prepare_resources.js'
-import { logger } from './lib/utils/pino_logger.js'
+import { startSchedule } from './lib/services/schedule.js'
+
+import { logger, logTypes } from './lib/utils/pino_logger.js'
 
 const app = express()
 
@@ -54,11 +56,15 @@ app.use((err, req, res, _) => {
 
 initWorkers()
 prepareResources().then(() => {
-    logger.info({ type: 'INTERNAL' }, 'Resources prepared')
+    logger.info({ type: logTypes.INTERNAL }, 'Resources prepared')
 }).catch((e) => {
     console.log(e)
 })
-
+startSchedule().then(() => {
+    logger.info({ type: logTypes.INTERNAL }, 'Schedule started')
+}).catch((e) => {
+    console.log(e)
+})
 
 const shutDownSignals = ['SIGINT', 'SIGTERM', 'SIGUSR2']
 

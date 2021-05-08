@@ -5,7 +5,9 @@ import {
 } from '../utils/error_utils.js'
 
 async function getFileServers() {
-    const servers = await MinioServer.query()
+    const servers = await MinioServer.query().where({
+        status: MinioServer.STATUSES.ACTIVE
+    })
     await Promise.all(servers.map(async (server) => {
         const testFile = await File.query().findOne({
             minioServerId: server.id,
@@ -145,7 +147,7 @@ async function getPartialUpload(data, { context }) {
             emitError(errorCodes.notFound, { field: 'minioServerId' })
         }
     } else {
-        const minioServer = await MinioServer.query().findOne({ })
+        const minioServer = await MinioServer.query().findOne({})
         minioServerId = minioServer.id
     }
 

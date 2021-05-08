@@ -4,7 +4,7 @@ import livr from 'livr'
 import flatten from 'flat'
 import livrExtraRules from 'livr-extra-rules'
 
-import { logger } from './pino_logger.js'
+import { logger, logTypes } from './pino_logger.js'
 
 livr.Validator.defaultAutoTrim(true)
 livr.Validator.registerDefaultRules(livrExtraRules)
@@ -189,6 +189,7 @@ export default {
     unflattenObject,
     fillTemplate,
     logger,
+    logTypes,
     pipeToFinish,
     getDurationInMs,
 }

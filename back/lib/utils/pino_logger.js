@@ -19,4 +19,10 @@ const logger = pino({
     level: process.env.PINO_LOG_LEVEL || 'info',
 }, destination)
 
-export { logger }
+const logTypes = {
+    INTERNAL: 'INTERNAL',
+    API_RESPONSE: 'API_RESPONSE',
+    API_CALL: 'API_CALL'
+}
+
+export { logger, logTypes }

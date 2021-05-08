@@ -52,7 +52,7 @@ function handleWsRpcConnection(ws, req) {
                     data = livrValidate(method.rules, data)
                 }
                 cf.logger.info({
-                    ...defaultLogData, data, type: 'API_CALL',
+                    ...defaultLogData, data, type: cf.logTypes.API_CALL,
                 }, 'API call')
 
                 const result = await method(_.cloneDeep(data), { context, msg })
@@ -72,7 +72,7 @@ function handleWsRpcConnection(ws, req) {
                 cf.logger.debug({
                     ...defaultLogData,
                     data: result,
-                    type: 'API_RESPONSE',
+                    type: cf.logTypes.API_RESPONSE,
                     duration: Date.now() - startRequestTime,
                 }, 'API response')
             } catch (err) {
@@ -85,7 +85,7 @@ function handleWsRpcConnection(ws, req) {
                     cf.logger.debug({
                         ...defaultLogData,
                         data,
-                        type: 'API_RESPONSE',
+                        type: cf.logTypes.API_RESPONSE,
                         duration: Date.now() - startRequestTime,
                     }, 'API response (error)')
                 } else {
@@ -93,7 +93,7 @@ function handleWsRpcConnection(ws, req) {
                     cf.logger.error({
                         ...defaultLogData,
                         error: err,
-                        type: 'API_RESPONSE',
+                        type: cf.logTypes.API_RESPONSE,
                         duration: Date.now() - startRequestTime,
                     }, 'API response (unknown error)')
                 }

@@ -4,4 +4,5 @@ async function prepareResources() {
     await MinioServer.prepareMinioServers()
 }
 
+
 export { prepareResources }

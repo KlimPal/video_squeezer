@@ -29,6 +29,10 @@ class MinioServer extends BaseModel {
         }
     }
 
+    static STATUSES = {
+        ACTIVE: 'ACTIVE',
+        UNREACHABLE: 'UNREACHABLE'
+    }
     static get tableName() {
         return 'minio_servers'
     }
@@ -36,9 +40,25 @@ class MinioServer extends BaseModel {
     async prepareInstance() {
         const defaultRegion = 'us-east-1'
         const bucketListToEnsure = [File.defaultBucket]
-        const minioClient = this.getMinioClient()
-        const created = (await minioClient.listBuckets()).map((el) => el.name)
-        const bucketsToCreate = bucketListToEnsure.filter((el) => !created.includes(el))
+
+        let minioClient
+        let createdBuckets
+        try {
+            minioClient = this.getMinioClient()
+            createdBuckets = (await minioClient.listBuckets()).map((el) => el.name)
+        } catch (err) {
+            await this.$query().updateAndFetch({
+                status: MinioServer.STATUSES.UNREACHABLE
+            })
+            cf.logger.warn({
+                minioServer: this,
+                type: cf.logTypes.INTERNAL
+            }, 'Minio server unreachable')
+            return
+        }
+
+
+        const bucketsToCreate = bucketListToEnsure.filter((el) => !createdBuckets.includes(el))
         await Promise.all(bucketsToCreate.map((name) => minioClient.makeBucket(name, defaultRegion)))
 
 
@@ -61,6 +81,12 @@ class MinioServer extends BaseModel {
                 status: File.STATUSES.UPLOAD_COMPLETED,
             })
         }
+        if (this.status !== MinioServer.STATUSES.ACTIVE) {
+            await this.$query().updateAndFetch({
+                status: MinioServer.STATUSES.ACTIVE
+            })
+        }
+
     }
 
     get secretKey() {
