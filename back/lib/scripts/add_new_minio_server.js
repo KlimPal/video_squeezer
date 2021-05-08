@@ -8,6 +8,7 @@ program
     .option('-a, --access-key <accessKey>', 'ACCESS_KEY')
     .option('-s, --secret-key <secretKey>', 'SECRET_KEY')
     .option('-r, --region <region>', 'REGION')
+    .option('-b, --bucket <bucket>', 'BUCKET')
 
 program.parse(process.argv)
 
@@ -20,6 +21,7 @@ async function main() {
         accessKey: options.accessKey,
         secretKey: options.secretKey,
         region: options.region,
+        bucket: options.bucket,
     })
     console.log('Done')
     process.exit(0)
