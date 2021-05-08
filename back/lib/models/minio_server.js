@@ -38,37 +38,26 @@ class MinioServer extends BaseModel {
     }
 
     async prepareInstance() {
-        let minioClient
-
-        try {
-            minioClient = this.getMinioClient()
-            console.log(this)
-
-            const createdBuckets = (await minioClient.listBuckets()).map((el) => el.name)
-            console.log(createdBuckets)
-
-            if (!createdBuckets.includes(this.bucket)) {
-                await minioClient.makeBucket(this.bucket, this.region)
-            }
-        } catch (err) {
-            await this.$query().updateAndFetch({
-                status: MinioServer.STATUSES.UNREACHABLE,
-            })
-            console.log(err)
-
-            cf.logger.warn({
-                minioServer: this,
-                type: cf.logTypes.INTERNAL,
-            }, 'Minio server unreachable')
-            return
-        }
+        const minioClient = this.getMinioClient()
 
         const testFileObjectName = 'public/test_1MB'
 
         const { res, err } = await cf.safeFuncRun(() => minioClient.statObject(this.bucket, testFileObjectName))
-        if (err?.code === 'NotFound') {
-            await minioClient.fPutObject(this.bucket, testFileObjectName, path.join(config.indexPath, 'constants', 'random_1MB'))
+        if (err) {
+            if (err.code === 'NotFound') {
+                await minioClient.fPutObject(this.bucket, testFileObjectName, path.join(config.indexPath, 'constants', 'random_1MB'))
+            } else {
+                await this.$query().updateAndFetch({
+                    status: MinioServer.STATUSES.UNREACHABLE,
+                })
+                cf.logger.warn({
+                    minioServer: this,
+                    type: cf.logTypes.INTERNAL,
+                }, 'Minio server unreachable')
+                return
+            }
         }
+
         const existingTestFile = await File.query().findOne({
             objectName: testFileObjectName,
             minioServerId: this.id,
@@ -103,7 +92,6 @@ class MinioServer extends BaseModel {
             accessKey: this.accessKey,
             secretKey: this.secretKey,
             region: this.region,
-            pathStyle: false,
         })
     }
 
