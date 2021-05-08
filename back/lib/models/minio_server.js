@@ -103,6 +103,7 @@ class MinioServer extends BaseModel {
             accessKey: this.accessKey,
             secretKey: this.secretKey,
             region: this.region,
+            pathStyle: false,
         })
     }
 
