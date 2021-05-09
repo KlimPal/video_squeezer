@@ -6,6 +6,7 @@ import { EventsService } from '../../services/events.service'
 import { formatDate } from '@angular/common';
 import { Router } from '@angular/router';
 import { appState } from '../../globalConfig'
+import * as pLimit from "p-limit";
 
 
 import {
@@ -211,7 +212,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         serverInfoList.find(el => el.downloadSpeed == maxSpeed).preferred = true
 
 
-        console.log(this.fileServers)
+        // console.log(this.fileServers)
 
 
     }
@@ -311,6 +312,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         }
         const minioServerId = this.fileServers.find(el => el.preferred)?.id || null;
 
+
         res = await sendWsMsg('files.getPartialUpload', {
             fileHash: hash,
             fileSize: file.size,
@@ -331,26 +333,36 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             return
         }
 
+
         let { uploadParts, fileId } = res.result
 
-        uploadParts = uploadParts.sort((a, b) => a.rangeStart - b.rangeStart)
+        uploadParts.sort((a, b) => a.rangeStart - b.rangeStart)
 
-        for (let i = 0; i < uploadParts.length; i++) {
-            let part = uploadParts[i]
-            this.uploadStatusText = `uploading ${i + 1}/${uploadParts.length} chunk`
-            if (part.status === 'UPLOADED') {
-                continue
-            }
-            let blobPart = file.slice(part.rangeStart, part.rangeEnd)
-            await http.putFileUsingPresignedUrl(part.presignedPutUrl, blobPart)
 
-            await sendWsMsg('files.completeFilePart', {
-                filePartId: part.filePartId,
-            })
+        let numberOfUploadedParts = uploadParts.filter(el => el.status === 'UPLOADED').length
 
-        }
 
-        this.uploadStatusText = 'merging chunks';
+        this.uploadStatusText = `Uploaded ${numberOfUploadedParts} / ${uploadParts.length} chunks`
+
+        const uploadJobs = uploadParts
+            .filter(el => el.status !== 'UPLOADED')
+            .map((part) => (async () => {
+                let blobPart = file.slice(part.rangeStart, part.rangeEnd)
+                await http.putFileUsingPresignedUrl(part.presignedPutUrl, blobPart)
+                await sendWsMsg('files.completeFilePart', {
+                    filePartId: part.filePartId,
+                })
+                numberOfUploadedParts++
+                this.uploadStatusText = `Uploaded ${numberOfUploadedParts} / ${uploadParts.length} chunks`
+            }))
+
+        const limit = pLimit(1)
+        const wrappedJobs = uploadJobs.map(f => limit(f))
+
+        await Promise.all(wrappedJobs)
+
+
+        this.uploadStatusText = 'Merging chunks';
         res = await sendWsMsg('files.completePartialUpload', {
             fileId,
             fileName: file.name
