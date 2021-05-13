@@ -10,7 +10,7 @@ import SparkMD5 from 'spark-md5'
 let nodeUrl = nodeRootAddress;
 
 export let dateUtils = {
-    msToStringDelay: (ms, { showSeconds = true } = {}) => {
+    msToStringDelay: (ms, { showSeconds = true, showMs = false } = {}) => {
         let isNegative = ms < 0
         if (isNegative) {
             ms = -ms;
@@ -28,7 +28,12 @@ export let dateUtils = {
         ms = ms % msInM;
         let s = Math.floor(ms / msInS);
         ms = ms % msInS;
-        return (isNegative ? '- ' : '') + ((d) ? d + 'd ' : '') + ((h) ? h + 'h ' : '') + ((m) ? m + 'm ' : '') + ((s && showSeconds || (!d && !h && !m)) ? s + 's' : '');
+        return (isNegative ? '- ' : '') +
+            ((d) ? d + 'd ' : '') +
+            ((h) ? h + 'h ' : '') +
+            ((m) ? m + 'm ' : '') +
+            ((s && showSeconds || (!d && !h && !m)) ? s + 's ' : '') +
+            ((ms && (showMs || (!d && !h && !m && !s))) ? ms + 'ms ' : '')
     }
 }
 let counterForUniqueCode = 0;
