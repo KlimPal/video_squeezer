@@ -1,6 +1,35 @@
 import crypto from 'crypto'
+import fs from 'fs-extra'
 import cf from './cf.js'
 
+function createAesDecipheriv(password, iv = Buffer.alloc(16, 0)) {
+    const key = crypto.createHash('sha256').update(password).digest()
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
+    return decipher
+}
+function createAesCipheriv(password, iv = Buffer.alloc(16, 0)) {
+    const key = crypto.createHash('sha256').update(password).digest()
+    const decipher = crypto.createCipheriv('aes-256-cbc', key, iv)
+    return decipher
+}
+
+// async function test() {
+//     const data = await fs.readFile('./constants/testdata')
+//     // console.log(data)
+
+
+//     const decipher = createAesDecipheriv('password')
+//     let result = decipher.update(data)
+//     result += decipher.final()
+//     console.log(result)
+
+//     // const readStream = fs.createReadStream('./constants/testdata')
+//     // const writeStream = fs.createWriteStream('./constants/testdata_decr')
+//     // await cf.pipeToFinish(readStream, decipher, writeStream)
+// }
+
+
+test()
 
 function getPasswordHash(password, {
     costExponent = 10,
