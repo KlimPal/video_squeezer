@@ -13,23 +13,6 @@ function createAesCipheriv(password, iv = Buffer.alloc(16, 0)) {
     return decipher
 }
 
-// async function test() {
-//     const data = await fs.readFile('./constants/testdata')
-//     // console.log(data)
-
-
-//     const decipher = createAesDecipheriv('password')
-//     let result = decipher.update(data)
-//     result += decipher.final()
-//     console.log(result)
-
-//     // const readStream = fs.createReadStream('./constants/testdata')
-//     // const writeStream = fs.createWriteStream('./constants/testdata_decr')
-//     // await cf.pipeToFinish(readStream, decipher, writeStream)
-// }
-
-
-test()
 
 function getPasswordHash(password, {
     costExponent = 10,
