@@ -1,8 +1,8 @@
-
 **Demo**: https://video-squeezer.klimpal.com
 
 ## Installation for development
 Required: docker, node v14, npm, npx
+
 **Frontend**:
 ```
 npm install -g @angular/cli
