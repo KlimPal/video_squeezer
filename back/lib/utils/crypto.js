@@ -1,5 +1,17 @@
 import crypto from 'crypto'
+import fs from 'fs-extra'
 import cf from './cf.js'
+
+function createAesDecipheriv(password, iv = Buffer.alloc(16, 0)) {
+    const key = crypto.createHash('sha256').update(password).digest()
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
+    return decipher
+}
+function createAesCipheriv(password, iv = Buffer.alloc(16, 0)) {
+    const key = crypto.createHash('sha256').update(password).digest()
+    const decipher = crypto.createCipheriv('aes-256-cbc', key, iv)
+    return decipher
+}
 
 
 function getPasswordHash(password, {
