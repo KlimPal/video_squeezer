@@ -56,14 +56,14 @@ function handleWsRpcConnection(ws, req) {
                 }, 'API call')
 
                 const result = await method(_.cloneDeep(data), { context, msg })
-                const response = JSON.stringify({
+                let response = JSON.stringify({
                     data: {
                         result,
                     },
                     id: msg.id,
                 })
                 if (response.length > config.minWsMsgSizeToGzip) {
-                    // response = await gzip(response)
+                    response = await gzip(response)
                 }
 
 
