@@ -1,7 +1,7 @@
 import { cf } from './cf'
 
 const workers = {
-    ungzip: new Worker('./workers/ungzip.worker', { type: 'module' })
+    ungzip: new Worker(new URL('./workers/ungzip.worker', import.meta.url))
 }
 const handlers = {}
 
