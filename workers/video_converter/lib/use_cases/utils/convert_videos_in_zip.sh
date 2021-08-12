@@ -8,7 +8,9 @@ ffmpeg_options=$ffmpeg_options
 
 tmpDirPath="${output_zip_path%.*}_tmp"
 rm -rf $tmpDirPath
+set +e
 unzip $input_zip_path -d $tmpDirPath
+set -e
 
 cur_path=$(pwd)
 cd $tmpDirPath
